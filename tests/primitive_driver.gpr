@@ -1,26 +1,12 @@
-------------------------------------------------------------------------------
---                             Templates Parser                             --
---                                                                          --
---                      Copyright (C) 1999-2013, AdaCore                    --
---                                                                          --
---  This is free software;  you can redistribute it  and/or modify it       --
---  under terms of the  GNU General Public License as published  by the     --
---  Free Software  Foundation;  either version 3,  or (at your option) any  --
---  later version.  This software is distributed in the hope  that it will  --
---  be useful, but WITHOUT ANY WARRANTY;  without even the implied warranty --
---  of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU     --
---  General Public License for  more details.                               --
---                                                                          --
---  You should have  received  a copy of the GNU General  Public  License   --
---  distributed  with  this  software;   see  file COPYING3.  If not, go    --
---  to http://www.gnu.org/licenses for a complete copy of the license.      --
-------------------------------------------------------------------------------
-
-
 project primitive_driver is
-   for source_dirs use ("../source",".");
-   for object_dir use ".";
-   for library_dir use ".";
-   for exec_dir use ".";
-   for main use ("primitive_driver");
+for Source_Dirs use ("../source",".");
+for Object_Dir use ".";
+for Library_Dir use ".";
+for Exec_Dir use ".";
+for Main use ("primitive_driver");
+package Compiler is
+   for Default_Switches ("Ada")
+   use ("-gnaty", "-v" , "-O2", "-gnat2012","-march=native","-mtune=native");
+end Compiler;
+
 end primitive_Driver;

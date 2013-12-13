@@ -1,55 +1,60 @@
-pragma ada_12;
+pragma License (GPL);
+with Ada.Numerics.Generic_Elementary_Functions;
+package AI.Primitive is
+   type Real is new Long_Long_Float;
+   type Index is new Integer;
+   type Real_Array is array (Index range <>) of Real;
+   type Index_Array is array (Index range <>) of Index;
 
-with ada.numerics.generic_elementary_functions;
-package ai.primitive is
-   type real is new long_long_float;
-   type index is new integer;
-   type real_array is array (index range <>) of real;
-   type index_array is array (index range <>) of index;
+   --  Math functions for Real
+   package Elementary_Functions is new
+   ada.numerics.generic_elementary_functions (Real);
 
-   -- Math functions for real
-   package elementary_functions is new
-   ada.numerics.generic_elementary_functions (real);
+   Index_mismatched : exception;
 
-   index_mismatched : exception;
+   function max (a : Real_Array; b : Index_Array) return Real with inline;
+   function max (a : Real_Array) return Real with inline;
+   function min (a : Real_Array; b : Index_Array) return Real with inline;
+   function min (a : Real_Array) return Real with inline;
+   ------------------
+   --  Statistics  --
+   ------------------
 
-   function max (a : real_array; b : index_array) return real with inline;
-   function max (a : real_array) return real with inline;
-   function min (a : real_array; b : index_array) return real with inline;
-   function min (a : real_array) return real with inline;
-   ----------------
-   -- Statistics --
-   ----------------
+   --  1st raw moment
+   function mean (a : Real_Array; b : Index_Array) return Real;
+   function mean (a : Real_Array) return Real;
 
-   -- 1st raw moment
-   function mean (a : real_array; b : index_array) return real;
+   --  2nd central moment
+   function variance (a : Real_Array; b : Index_Array) return Real;
+   function variance (a : Real_Array) return Real;
 
-   -- 2nd central moment
-   function variance (a : real_array; b : index_array) return real;
+   function standard_deviation (a : Real_Array; b : Index_Array) return Real;
+   function standard_deviation (a : Real_Array) return Real;
 
-   function standard_deviation (a : real_array; b : index_array) return real;
+   function central_moment
+      (a : Real_Array; b : Index_Array; n : Positive) return Real;
+   function central_moment (a : Real_Array; n : Positive) return Real;
 
-   function central_moment (a : real_array; b : index_array; n : positive) return real;
-
-   function normalized_moment (a : real_array; b : index_array; n : positive) return real;
-
-   function normalized_moment (a : real_array; n : positive) return real;
-   -- mode
+   function normalized_moment
+      (a : Real_Array; b : Index_Array; n : Positive) return Real;
+   function normalized_moment (a : Real_Array; n : Positive) return Real;
+   --  mode
 
    ---------------
    -- Distances --
    ---------------
-   function squared_euclidean_distance(a,b:real_array) return real with inline;
+   function squared_euclidean_distance
+      (a, b : Real_Array) return Real with inline;
 
-   function euclidean_distance(a,b:real_array) return real with inline;
+   function euclidean_distance (a, b : Real_Array) return Real with inline;
 
-   function manhattan_distance(a,b:real_array) return real with  inline;
+   function manhattan_distance (a, b : Real_Array) return Real with inline;
 
-   function sup_distance(a,b:real_array) return real with  inline;
+   function sup_distance (a, b : Real_Array) return Real with inline;
 
-   function cosine_distance(a,b:real_array) return real with inline;
+   function cosine_distance (a, b : Real_Array) return Real with inline;
 
-   -- hamming_distance
-   -- simple_matching_distance
+   --  hamming_distance
+   --  simple_matching_distance
 
-end ai.primitive;
+end AI.Primitive;

@@ -1,2 +1,2 @@
-package ai is
-end ai;
+package AI is
+end AI;
