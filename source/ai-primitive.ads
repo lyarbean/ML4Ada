@@ -1,11 +1,6 @@
 pragma License (GPL);
 with Ada.Numerics.Generic_Elementary_Functions;
 package AI.Primitive is
-   type Real is new Long_Long_Float;
-   type Index is new Integer;
-   type Real_Array is array (Index range <>) of Real;
-   type Index_Array is array (Index range <>) of Index;
-
    --  Math functions for Real
    package Elementary_Functions is new
    ada.numerics.generic_elementary_functions (Real);
@@ -25,8 +20,9 @@ package AI.Primitive is
    function mean (a : Real_Array) return Real;
 
    --  2nd central moment
-   function variance (a : Real_Array; b : Index_Array) return Real;
-   function variance (a : Real_Array) return Real;
+   function variance
+      (a : Real_Array; b : Index_Array; Bessel : Boolean := True) return Real;
+   function variance (a : Real_Array; Bessel : Boolean := True) return Real;
 
    function standard_deviation (a : Real_Array; b : Index_Array) return Real;
    function standard_deviation (a : Real_Array) return Real;
