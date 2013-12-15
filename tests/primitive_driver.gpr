@@ -1,4 +1,4 @@
-project primitive_driver is
+project Primitive_Driver is
 for Source_Dirs use ("../source",".");
 for Object_Dir use ".";
 for Library_Dir use ".";
@@ -6,7 +6,8 @@ for Exec_Dir use ".";
 for Main use ("primitive_driver");
 package Compiler is
    for Default_Switches ("Ada")
-   use ("-gnaty", "-v" , "-O2", "-gnat2012","-march=native","-mtune=native");
+   use ("-gnaty", "-pipe", "-v" , "-O3",
+        "-gnat2012", "-march=native", "-mtune=native");
 end Compiler;
 
 end primitive_Driver;

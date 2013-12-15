@@ -2,7 +2,7 @@ pragma License (GPL);
 package body AI.Primitive is
    use Elementary_Functions;
 
-   function max (a : Real_Array; b : Index_Array) return Real is
+   function Max (a : Real_Array; b : Index_Array) return Real is
       m : Real := a (b (b'First));
    begin
       for c of b loop
@@ -11,9 +11,9 @@ package body AI.Primitive is
          end if;
       end loop;
       return m;
-   end max;
+   end Max;
 
-   function max (a : Real_Array) return Real is
+   function Max (a : Real_Array) return Real is
       m : Real := a (a'First);
    begin
       for c of a loop
@@ -22,9 +22,9 @@ package body AI.Primitive is
          end if;
       end loop;
       return m;
-   end max;
+   end Max;
 
-   function min (a : Real_Array; b : Index_Array) return Real is
+   function Min (a : Real_Array; b : Index_Array) return Real is
       m : Real := a (b (b'First));
    begin
       for c of b loop
@@ -33,9 +33,9 @@ package body AI.Primitive is
          end if;
       end loop;
       return m;
-   end min;
+   end Min;
 
-   function min (a : Real_Array) return Real is
+   function Min (a : Real_Array) return Real is
       m : Real := a (a'First);
    begin
       for c of a loop
@@ -44,9 +44,18 @@ package body AI.Primitive is
          end if;
       end loop;
       return m;
-   end min;
+   end Min;
 
-   function mean (a : Real_Array; b : Index_Array) return Real is
+   function Sum (a : Real_Array) return Real is
+      m : Real := 0.0;
+   begin
+      for c of a loop
+         m := m + c;
+      end loop;
+      return m;
+   end Sum;
+
+   function Mean (a : Real_Array; b : Index_Array) return Real is
       m : Real := 0.0;
    begin
       for c of b loop
@@ -54,9 +63,9 @@ package body AI.Primitive is
       end loop;
       m := m / Real (b'Length);
       return m;
-   end mean;
+   end Mean;
 
-   function mean (a : Real_Array) return Real is
+   function Mean (a : Real_Array) return Real is
       m : Real := 0.0;
    begin
       for c of a loop
@@ -64,10 +73,12 @@ package body AI.Primitive is
       end loop;
       m := m / Real (a'Length);
       return m;
-   end mean;
+   end Mean;
 
    --  E(x^2) - E(x)^2
-   function variance (a : Real_Array; b : Index_Array) return Real is
+   function Variance
+      (a : Real_Array; b : Index_Array; Bessel : Boolean := True)
+      return Real is
       v, m : Real := 0.0;
    begin
       for c of b loop
@@ -76,10 +87,13 @@ package body AI.Primitive is
       end loop;
       m := m / Real (b'Length);
       v := v / Real (b'Length) - m * m;
-      return v; -- N.B. No bessel's correction (N-1) applied!
-   end variance;
+      if Bessel then
+         v := v * Real (b'Length) / Real (b'Length - 1);
+      end if;
+      return v;
+   end Variance;
 
-   function variance (a : Real_Array) return Real is
+   function Variance (a : Real_Array; Bessel : Boolean := True) return Real is
       v, m : Real := 0.0;
    begin
       for c of a loop
@@ -88,42 +102,44 @@ package body AI.Primitive is
       end loop;
       m := m / Real (a'Length);
       v := v / Real (a'Length) - m * m;
+      if Bessel then
+         v := v * Real (a'Length) / Real (a'Length - 1);
+      end if;
+      return v;
+   end Variance;
 
-      return v; -- N.B. No bessel's correction (N-1) applied!
-   end variance;
-
-   function standard_deviation (a : Real_Array; b : Index_Array) return Real is
+   function Standard_Deviation (a : Real_Array; b : Index_Array) return Real is
    begin
-      return Sqrt (variance (a, b));
-   end standard_deviation;
+      return Sqrt (Variance (a, b));
+   end Standard_Deviation;
 
-   function standard_deviation (a : Real_Array) return Real is
+   function Standard_Deviation (a : Real_Array) return Real is
    begin
-      return Sqrt (variance (a));
-   end standard_deviation;
+      return Sqrt (Variance (a));
+   end Standard_Deviation;
 
-   function central_moment (a : Real_Array; b : Index_Array; n : Positive)
+   function Central_Moment (a : Real_Array; b : Index_Array; n : Positive)
       return Real is
-      m : Real := mean (a, b);
+      m : Real := Mean (a, b);
       v : Real := 0.0;
    begin
       for c of b loop
          v := v + (a (c) - m) ** n;
       end loop;
       return v / Real (b'Length);
-   end central_moment;
+   end Central_Moment;
 
-   function central_moment (a : Real_Array; n : Positive) return Real is
-      m : Real := mean (a);
+   function Central_Moment (a : Real_Array; n : Positive) return Real is
+      m : Real := Mean (a);
       v : Real := 0.0;
    begin
       for c of a loop
          v := v + (c - m) ** n;
       end loop;
       return v / Real (a'Length);
-   end central_moment;
+   end Central_Moment;
 
-   function normalized_moment (a : Real_Array; b : Index_Array; n : Positive)
+   function Normalized_Moment (a : Real_Array; b : Index_Array; n : Positive)
       return Real is
       m  : Real := 0.0;
       v2 : Real := 0.0;
@@ -141,9 +157,9 @@ package body AI.Primitive is
       v2 := Sqrt (v2) ** n;
       vn := vn / Real (b'Length);
       return vn / v2;
-   end normalized_moment;
+   end Normalized_Moment;
 
-   function normalized_moment (a : Real_Array; n : Positive) return Real is
+   function Normalized_Moment (a : Real_Array; n : Positive) return Real is
       m  : Real := 0.0;
       v2 : Real := 0.0;
       vn : Real := 0.0;
@@ -162,36 +178,36 @@ package body AI.Primitive is
       v2 := Sqrt (v2) ** n;
       vn := vn / Real (a'Length);
       return vn / v2;
-   end normalized_moment;
+   end Normalized_Moment;
 
    ---------------
    -- Distances --
    ---------------
 
-   function squared_euclidean_distance (a, b : Real_Array) return Real is
+   function Squared_Euclidean_Distance (a, b : Real_Array) return Real is
       m : Real := 0.0;
    begin
       for j in a'Range loop
-         m := m + (a (j) - b (j + b'First - a'First)) ** 2;
+         m := m + (a (j) - b (j - a'First + b'First)) ** 2;
       end loop;
       return m;
-   end squared_euclidean_distance;
+   end Squared_Euclidean_Distance;
 
-   function euclidean_distance (a, b : Real_Array) return Real is
+   function Euclidean_Distance (a, b : Real_Array) return Real is
    begin
-      return Sqrt (squared_euclidean_distance (a, b));
-   end euclidean_distance;
+      return Sqrt (Squared_Euclidean_Distance (a, b));
+   end Euclidean_Distance;
 
-   function manhattan_distance (a, b : Real_Array) return Real is
+   function Manhattan_Distance (a, b : Real_Array) return Real is
       m : Real := 0.0;
    begin
       for j in a'Range loop
          m := m + abs (a (j) - b (j + b'First - a'First));
       end loop;
       return m;
-   end manhattan_distance;
+   end Manhattan_Distance;
 
-   function sup_distance (a, b : Real_Array) return Real is
+   function Sup_Distance (a, b : Real_Array) return Real is
       m : Real := 0.0;
       d : Real;
    begin
@@ -202,9 +218,9 @@ package body AI.Primitive is
          end if;
       end loop;
       return m;
-   end sup_distance;
+   end Sup_Distance;
 
-   function cosine_distance (a, b : Real_Array) return Real is
+   function Cosine_Distance (a, b : Real_Array) return Real is
       m, na, nb : Real := 0.0;
    begin
       for j in a'Range loop
@@ -216,6 +232,6 @@ package body AI.Primitive is
       if m = 0.0 then return 1.0; end if;
 
       return 1.0 - m / Sqrt (na * nb);
-   end cosine_distance;
+   end Cosine_Distance;
 
 end AI.Primitive;

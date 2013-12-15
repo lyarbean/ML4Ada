@@ -4,6 +4,7 @@ with Ada.Text_IO;
 use Ada.Text_IO;
 
 procedure primitive_driver is
+   use AI;
    s1 : Real_Array (1 .. 10)
       := (2.4, 2.5, 7.6, 1.3, 2.5, 7.6, 3.4, 5.6, 0.2, 0.7);
    s2 : Real_Array (1 .. 10)
