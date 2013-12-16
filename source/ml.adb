@@ -1,4 +1,4 @@
-package body AI is
+package body ML is
    --  TODO Assert the same range!
    procedure Add (a : in out Real_Array;  b : in Real_Array) is
    begin
@@ -32,4 +32,4 @@ package body AI is
          end loop;
       end return;
    end "*";
-end AI;
+end ML;

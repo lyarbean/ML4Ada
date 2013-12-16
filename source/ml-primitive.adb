@@ -1,5 +1,5 @@
 pragma License (GPL);
-package body AI.Primitive is
+package body ML.Primitive is
    use Elementary_Functions;
 
    function Max (a : Real_Array; b : Index_Array) return Real is
@@ -234,4 +234,4 @@ package body AI.Primitive is
       return 1.0 - m / Sqrt (na * nb);
    end Cosine_Distance;
 
-end AI.Primitive;
+end ML.Primitive;

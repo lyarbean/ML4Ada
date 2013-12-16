@@ -2,7 +2,7 @@ pragma License (GPL);
 with Ada.Containers.Ordered_Sets;
 with Ada.Finalization;
 
-package AI.Clustering.Kmeans is
+package ML.Clustering.Kmeans is
    type Object (k : Index_Type; Items : not null Real_Array_Vector_Access) is
       new Ada.Finalization.Limited_Controlled with private;
 
@@ -27,5 +27,5 @@ package AI.Clustering.Kmeans is
       Withins   : Index_Array_Access      := null;
    end record;
    overriding procedure finalize (o : in out Object);
-end AI.Clustering.Kmeans;
+end ML.Clustering.Kmeans;
 

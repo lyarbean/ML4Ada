@@ -1,6 +1,6 @@
 pragma License (GPL);
 with Ada.Numerics.Generic_Elementary_Functions;
-package AI.Primitive is
+package ML.Primitive is
    --  Math functions for Real
    package Elementary_Functions is new
    Ada.Numerics.Generic_Elementary_Functions (Real);
@@ -54,4 +54,4 @@ package AI.Primitive is
    --  hamming_distance
    --  simple_matching_distance
 
-end AI.Primitive;
+end ML.Primitive;

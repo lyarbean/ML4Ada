@@ -1,3 +1,3 @@
 pragma License (GPL);
-package AI.Clustering is
-end AI.Clustering;
+package ML.Clustering is
+end ML.Clustering;

@@ -1,10 +1,10 @@
 pragma License (GPL);
-with AI.Primitive;
+with ML.Primitive;
 with Ada.Unchecked_Deallocation;
 with Ada.Text_IO;
 
-package body AI.Clustering.Kmeans is
-   package AIP renames AI.Primitive;
+package body ML.Clustering.Kmeans is
+   package MLP renames ML.Primitive;
    procedure free is new Ada.Unchecked_Deallocation
       (Real_Array, Real_Array_Access);
    procedure free is new Ada.Unchecked_Deallocation
@@ -57,7 +57,7 @@ package body AI.Clustering.Kmeans is
                dist := Real'Last;
                for jk in 1 .. k loop
                   --  TODO Optimize this
-                  tmp := AIP.Squared_Euclidean_Distance
+                  tmp := MLP.Squared_Euclidean_Distance
                      (o.Items.all (jn), o.Centroids (jk).all);
                   if tmp < dist then
                      dist := tmp;
@@ -93,7 +93,7 @@ package body AI.Clustering.Kmeans is
             for j in 1 .. k loop
                r := o.Centroids (j);
                for jj of o.Clusters (j)  loop
-                  o.WSS (j) := o.WSS (j) + AIP.Squared_Euclidean_Distance
+                  o.WSS (j) := o.WSS (j) + MLP.Squared_Euclidean_Distance
                      (o.Centroids (j).all, o.Items.all (jj));
                end loop;
             end loop;
@@ -104,7 +104,7 @@ package body AI.Clustering.Kmeans is
             o.BSS := 0.0;
             for j in 1 .. k loop
                o.BSS := o.BSS +
-               AIP.Squared_Euclidean_Distance (o.Centroids (j).all, m) *
+               MLP.Squared_Euclidean_Distance (o.Centroids (j).all, m) *
                Real (o.Clusters (j).Length);
             end loop;
          end WSS_BSS;
@@ -142,10 +142,10 @@ package body AI.Clustering.Kmeans is
       end loop;
       New_Line;
       Put_Line ("(between_SS / total_SS =  "
-      & Real'Image (o.BSS * 100.0 / (AIP.Sum (o.WSS) + o.BSS)) & " %)");
+      & Real'Image (o.BSS * 100.0 / (MLP.Sum (o.WSS) + o.BSS)) & " %)");
       New_Line;
       Put_Line ("Iterated " & o.Iter'Img & " times");
    end Put;
 
-end AI.Clustering.Kmeans;
+end ML.Clustering.Kmeans;
 
