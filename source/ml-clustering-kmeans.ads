@@ -9,7 +9,7 @@ package ML.Clustering.Kmeans is
    procedure Run (o : in out Object; k : Positive; m : Positive := 10);
    procedure Put (o : in Object);
 
-   private
+private
 
    package Index_Set is new Ada.Containers.Ordered_Sets (Index_Type);
    type Index_Array_Access is access Index_Array;
