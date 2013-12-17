@@ -21,11 +21,11 @@ package body ML.Clustering.Kmeans is
       free (o.Withins);
    end finalize;
 
-   procedure Run (o : in out Object; k : Positive; m : Positive := 10) is
+   procedure Run (o : in out Object; m : Positive := 10) is
       n : Index_Type := Index_Type (o.Items.Length);
    begin
       --  TODO raise exception
-      if k < 2 or n < k then
+      if o.k < 2 or n < o.k then
          return;
       end if;
 
@@ -42,7 +42,8 @@ package body ML.Clustering.Kmeans is
          o.Withins.all := (others => 1);
          --  Initialze clusters
          --  TODO Randomize
-         for j in 1 .. k loop
+
+         for j in o.Centroids'Range loop
             o.Centroids (j) := new Real_Array'(o.Items.all (j));
             o.Clusters (j).Include (j);
             o.Withins (j) := j;
@@ -53,9 +54,9 @@ package body ML.Clustering.Kmeans is
             updated := False;
             Each_Item :
             for jn in 1 .. n loop
-               --  for each vector A_{jn}, find a nearest center
+               --  Find a nearest cluster for jn
                dist := Real'Last;
-               for jk in 1 .. k loop
+               for jk in o.Centroids'Range loop
                   --  TODO Optimize this
                   tmp := MLP.Squared_Euclidean_Distance
                      (o.Items.all (jn), o.Centroids (jk).all);
@@ -74,8 +75,9 @@ package body ML.Clustering.Kmeans is
             end loop Each_Item;
 
             exit Iterative when not updated;
-            --  update centroid
-            for j in 1 .. k loop
+
+            --  update centroids
+            for j in o.Centroids'Range loop
                o.Centroids (j).all := (others => 0.0);
                for jj of o.Clusters (j)  loop
                   MLP.Add (o.Centroids (j).all, o.Items.all (jj));
@@ -90,7 +92,7 @@ package body ML.Clustering.Kmeans is
             r : Real_Array_Access;
             m : Real_Array (o.Centroids (1)'Range) := (others => 0.0);
          begin
-            for j in 1 .. k loop
+            for j in o.Centroids'Range loop
                r := o.Centroids (j);
                for jj of o.Clusters (j)  loop
                   o.WSS (j) := o.WSS (j) + MLP.Squared_Euclidean_Distance
@@ -102,7 +104,7 @@ package body ML.Clustering.Kmeans is
             end loop;
             MLP.Divide (m, Real (n));
             o.BSS := 0.0;
-            for j in 1 .. k loop
+            for j in o.Centroids'Range loop
                o.BSS := o.BSS +
                MLP.Squared_Euclidean_Distance (o.Centroids (j).all, m) *
                Real (o.Clusters (j).Length);

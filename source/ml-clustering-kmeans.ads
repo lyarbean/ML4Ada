@@ -6,7 +6,7 @@ package ML.Clustering.Kmeans is
    type Object (k : Index_Type; Items : not null Real_Array_Vector_Access) is
       new Ada.Finalization.Limited_Controlled with private;
 
-   procedure Run (o : in out Object; k : Positive; m : Positive := 10);
+   procedure Run (o : in out Object; m : Positive := 10);
    procedure Put (o : in Object);
 
 private
