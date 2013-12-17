@@ -9,7 +9,7 @@ procedure kmeans_driver is
    --  data : Real_Array_Vector_Access := new  Real_Array_Vector;
    --  kmeans_obj : ML.Clustering.Kmeans.Object (3, data);
    data : aliased Real_Array_Vector;
-   kmeans_obj : ML.Clustering.Kmeans.Object (3, data'Unchecked_Access);
+   kmeans_obj : ML.Clustering.Kmeans.Object (3, data'Access);
 begin
    data.Append ((1.15051216, 0.472122276));
    data.Append ((1.09239598, 0.636432058));
@@ -61,6 +61,6 @@ begin
    data.Append ((0.32893477, 0.637998218));
    data.Append ((0.77677226, 0.017112272));
    data.Append ((0.33214128, 0.328192015));
-   ML.Clustering.Kmeans.Run (kmeans_obj, 3);
+   ML.Clustering.Kmeans.Run (kmeans_obj, 12);
    ML.Clustering.Kmeans.Put (kmeans_obj);
 end kmeans_driver;

@@ -5,6 +5,7 @@ with Ada.Text_IO;
 
 package body ML.Clustering.Kmeans is
    package MLP renames ML.Primitive;
+
    procedure free is new Ada.Unchecked_Deallocation
       (Real_Array, Real_Array_Access);
    procedure free is new Ada.Unchecked_Deallocation
@@ -24,9 +25,12 @@ package body ML.Clustering.Kmeans is
    procedure Run (o : in out Object; m : Positive := 10) is
       n : Index_Type := Index_Type (o.Items.Length);
    begin
-      --  TODO raise exception
-      if o.k < 2 or n < o.k then
-         return;
+      if o.k < 2  then
+         raise SMALL_K;
+      end if;
+
+      if n < o.k then
+         raise HUGE_K;
       end if;
 
       declare
