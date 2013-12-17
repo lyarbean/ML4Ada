@@ -1,2 +1,15 @@
 0. Primtive types and operations
 1. Classification and Clustering algorithms
+    a. NaiveBayes
+        i. Text
+        ii. Normal distribution, ie. numeric
+
+    b. KNN
+
+    c. Apriori
+
+    ...
+
+    z. SVM
+
+2. SIMD and Vectorize

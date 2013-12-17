@@ -78,9 +78,9 @@ package body ML.Clustering.Kmeans is
             for j in 1 .. k loop
                o.Centroids (j).all := (others => 0.0);
                for jj of o.Clusters (j)  loop
-                  Add (o.Centroids (j).all, o.Items.all (jj));
+                  MLP.Add (o.Centroids (j).all, o.Items.all (jj));
                end loop;
-               Divide (o.Centroids (j).all, Real (o.Clusters (j).Length));
+               MLP.Divide (o.Centroids (j).all, Real (o.Clusters (j).Length));
             end loop;
             o.Iter := jm;
          end loop Iterative;
@@ -98,9 +98,9 @@ package body ML.Clustering.Kmeans is
                end loop;
             end loop;
             for j in 1 .. n loop
-               Add (m, o.Items.all (j));
+               MLP.Add (m, o.Items.all (j));
             end loop;
-            Divide (m, Real (n));
+            MLP.Divide (m, Real (n));
             o.BSS := 0.0;
             for j in 1 .. k loop
                o.BSS := o.BSS +

@@ -2,6 +2,45 @@ pragma License (GPL);
 package body ML.Primitive is
    use Elementary_Functions;
 
+   procedure Add (a : in out Real_Array;  b : in Real_Array) is
+   begin
+      for j in a'Range loop
+         pragma Loop_Optimize (Vector);
+         a (j) := a (j) + b (j);
+      end loop;
+   end Add;
+   procedure Sub (a : in out Real_Array;  b : in Real_Array) is
+   begin
+      for j in a'Range loop
+         pragma Loop_Optimize (Vector);
+         a (j) := a (j) - b (j);
+      end loop;
+   end Sub;
+   procedure Multiply (a : in out Real_Array; b : in Real) is
+   begin
+
+      for c of a loop
+         pragma Loop_Optimize (Vector);
+         c := c * b;
+      end loop;
+   end Multiply;
+   procedure Divide (a : in out Real_Array; b : in Real) is
+   begin
+      for c of a loop
+         pragma Loop_Optimize (Vector);
+         c := c / b;
+      end loop;
+   end Divide;
+   function "*" (a : Real_Array; b : Real) return Real_Array is
+   begin
+      return r : Real_Array := a do
+         for c of r loop
+            pragma Loop_Optimize (Vector);
+            c := c * b;
+         end loop;
+      end return;
+   end "*";
+
    function Max (a : Real_Array; b : Index_Array) return Real is
       m : Real := a (b (b'First));
    begin
@@ -188,6 +227,7 @@ package body ML.Primitive is
       m : Real := 0.0;
    begin
       for j in a'Range loop
+         pragma Loop_Optimize (Vector);
          m := m + (a (j) - b (j - a'First + b'First)) ** 2;
       end loop;
       return m;
@@ -202,6 +242,7 @@ package body ML.Primitive is
       m : Real := 0.0;
    begin
       for j in a'Range loop
+         pragma Loop_Optimize (Vector);
          m := m + abs (a (j) - b (j + b'First - a'First));
       end loop;
       return m;
@@ -224,6 +265,7 @@ package body ML.Primitive is
       m, na, nb : Real := 0.0;
    begin
       for j in a'Range loop
+         pragma Loop_Optimize (Vector);
          m  := m  + a (j) * b (j + b'First - a'First);
          na := na + a (j) * a (j);
          nb := nb + b (j) * b (j);
