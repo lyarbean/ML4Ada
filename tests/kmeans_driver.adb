@@ -5,10 +5,7 @@ use Ada.Strings.Unbounded;
 with Ada.Text_IO;
 use Ada.Text_IO;
 procedure kmeans_driver is
-   use ML;
-   --  data : Real_Array_Vector_Access := new  Real_Array_Vector;
-   --  kmeans_obj : ML.Clustering.Kmeans.Object (3, data);
-   data : aliased Real_Array_Vector;
+   data : aliased ML.Real_Array_Vector;
    kmeans_obj : ML.Clustering.Kmeans.Object (3, data'Access);
 begin
    data.Append ((1.15051216, 0.472122276));
