@@ -1,26 +1,35 @@
 pragma License (GPL);
 with ML.Primitive;
 with Ada.Unchecked_Deallocation;
+with Ada.Numerics.Discrete_Random;
 with Ada.Text_IO;
 
 package body ML.Clustering.Kmeans is
    package MLP renames ML.Primitive;
-
-   procedure free is new Ada.Unchecked_Deallocation
+   package ANDR is new Ada.Numerics.Discrete_Random (Index_Type);
+   procedure Free is new Ada.Unchecked_Deallocation
       (Real_Array, Real_Array_Access);
-   procedure free is new Ada.Unchecked_Deallocation
+   procedure Free is new Ada.Unchecked_Deallocation
       (Index_Array, Index_Array_Access);
 
-   procedure finalize (o : in out Object) is
+   procedure Initialize (o : in out Object) is
+   begin
+      o.Centroids := (others => null);
+      o.WSS := (others => 0.0);
+      o. Withins := null;
+      o.BSS := 0.0;
+      o.Iter := 0;
+   end Initialize;
+   procedure Finalize (o : in out Object) is
    begin
       if o.Withins = null then
          return;
       end if;
       for c of o.Centroids loop
-         free (c);
+         Free (c);
       end loop;
-      free (o.Withins);
-   end finalize;
+      Free (o.Withins);
+   end Finalize;
 
    procedure Run (o : in out Object; m : Positive := 10) is
       n : Index_Type := Index_Type (o.Items.Length);
@@ -38,21 +47,34 @@ package body ML.Clustering.Kmeans is
          dist    : Real;
          tmp     : Real;
          idx     : Index_Type;
+         g       : ANDR.Generator;
       begin
          if o.Withins /= null then
-            free (o.Withins);
+            Free (o.Withins);
          end if;
          o.Withins := new Index_Array (1 .. n);
          o.Withins.all := (others => 1);
-         --  Initialze clusters
-         --  TODO Randomize
 
-         for j in o.Centroids'Range loop
-            o.Centroids (j) := new Real_Array'(o.Items.all (j));
-            o.Clusters (j).Include (j);
-            o.Withins (j) := j;
-         end loop;
 
+         Initialize_Centroids :
+         declare
+            c : Index_Type; --  centroid
+         begin
+            ANDR.Reset (g);
+
+            for j in o.Centroids'Range loop
+               <<ReGen>>
+               c := (ANDR.Random (g) mod n) + 1;
+               for jj in 1 .. j - 1 loop
+                  if o.Clusters (jj).Contains (c) then
+                     goto ReGen;
+                  end if;
+               end loop;
+               o.Centroids (j) := new Real_Array'(o.Items.all (c));
+               o.Clusters (j).Include (c);
+               o.Withins (c) := j;
+            end loop;
+         end Initialize_Centroids;
          Iterative :
          for jm in 1 .. m loop
             updated := False;
