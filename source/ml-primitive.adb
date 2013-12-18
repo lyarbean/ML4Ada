@@ -2,21 +2,21 @@ pragma License (GPL);
 package body ML.Primitive is
    use Elementary_Functions;
 
-   procedure Add (a : in out Real_Array;  b : in Real_Array) is
+   procedure Add (a : in out Real_Array;  b : Real_Array) is
    begin
       for j in a'Range loop
          pragma Loop_Optimize (Vector);
          a (j) := a (j) + b (j);
       end loop;
    end Add;
-   procedure Sub (a : in out Real_Array;  b : in Real_Array) is
+   procedure Sub (a : in out Real_Array;  b : Real_Array) is
    begin
       for j in a'Range loop
          pragma Loop_Optimize (Vector);
          a (j) := a (j) - b (j);
       end loop;
    end Sub;
-   procedure Multiply (a : in out Real_Array; b : in Real) is
+   procedure Multiply (a : in out Real_Array; b : Real) is
    begin
 
       for c of a loop
@@ -24,7 +24,7 @@ package body ML.Primitive is
          c := c * b;
       end loop;
    end Multiply;
-   procedure Divide (a : in out Real_Array; b : in Real) is
+   procedure Divide (a : in out Real_Array; b : Real) is
    begin
       for c of a loop
          pragma Loop_Optimize (Vector);
@@ -271,7 +271,9 @@ package body ML.Primitive is
          nb := nb + b (j) * b (j);
       end loop;
 
-      if m = 0.0 then return 1.0; end if;
+      if m = 0.0 then
+         return 1.0;
+      end if;
 
       return 1.0 - m / Sqrt (na * nb);
    end Cosine_Distance;

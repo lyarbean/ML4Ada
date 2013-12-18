@@ -7,11 +7,11 @@ package ML.Primitive is
 
    Index_mismatched : exception;
 
-   procedure Add (a : in out Real_Array; b : in Real_Array)
+   procedure Add (a : in out Real_Array; b : Real_Array)
       with Pre => a'First in b'Range and a'Last in b'Range;
-   procedure Sub (a : in out Real_Array; b : in Real_Array);
-   procedure Multiply (a : in out Real_Array; b : in Real);
-   procedure Divide (a : in out Real_Array; b : in Real);
+   procedure Sub (a : in out Real_Array; b : Real_Array);
+   procedure Multiply (a : in out Real_Array; b : Real);
+   procedure Divide (a : in out Real_Array; b : Real);
    function "*" (a : Real_Array; b : Real) return Real_Array;
 
    function Max (a : Real_Array; b : Index_Array) return Real with inline;
