@@ -114,11 +114,10 @@ package body ML.Clustering.Kmeans is
                   end if;
                end loop;
 
-               if o.Centroids (j) = null then
-                  o.Centroids (j) := new Real_Array'(items.all (c));
-               else
-                  o.Centroids (j).all := items.all (c);
+               if o.Centroids (j) /= null then
+                  raise PROGRAM_ERROR;
                end if;
+               o.Centroids (j) := new Real_Array'(items.all (c));
 
                o.Clusters (j).Include (c);
                o.Withins (c) := j;

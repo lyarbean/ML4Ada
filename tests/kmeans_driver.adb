@@ -58,5 +58,8 @@ begin
    data.Append ((0.77677226, 0.017112272));
    data.Append ((0.33214128, 0.328192015));
    ML.Clustering.Kmeans.Run (kmeans_obj, data'Access, 12);
+   ML.Clustering.Kmeans.Run (kmeans_obj, data'Access, 12);
+   ML.Clustering.Kmeans.Run (kmeans_obj, data'Access, 12);
+   ML.Clustering.Kmeans.Run (kmeans_obj, data'Access, 12);
    ML.Clustering.Kmeans.Put (kmeans_obj);
 end kmeans_driver;
