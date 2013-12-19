@@ -2,7 +2,25 @@ with ML.Clustering.Kmeans;
 
 procedure kmeans_driver is
    data : ML.Real_Array_Vector;
-   kmeans_obj : ML.Clustering.Kmeans.Object (3);
+   --  Functions to access data
+   function Length return Integer;
+   function Element (x : ML.Index_Type) return ML.Real_Array;
+
+   function Length return Integer is
+   begin
+      if data.Is_Empty then
+         return 0;
+      end if;
+      return Integer (data.Length);
+   end Length;
+
+   function Element (x : ML.Index_Type) return ML.Real_Array is
+   begin
+      return data.Element (x);
+   end Element;
+
+   package Kmeans is new ML.Clustering.Kmeans (Length, Element);
+   kmeans_obj : Kmeans.Object (3);
 begin
    data.Append ((1.15051216, 0.472122276));
    data.Append ((1.09239598, 0.636432058));
@@ -54,9 +72,12 @@ begin
    data.Append ((0.32893477, 0.637998218));
    data.Append ((0.77677226, 0.017112272));
    data.Append ((0.33214128, 0.328192015));
-   ML.Clustering.Kmeans.Run (kmeans_obj, data, 12);
-   ML.Clustering.Kmeans.Run (kmeans_obj, data, 12);
-   ML.Clustering.Kmeans.Run (kmeans_obj, data, 12);
-   ML.Clustering.Kmeans.Run (kmeans_obj, data, 12);
-   ML.Clustering.Kmeans.Put (kmeans_obj);
+   Kmeans.Run (kmeans_obj, 12);
+   Kmeans.Run (kmeans_obj, 12);
+   Kmeans.Run (kmeans_obj, 12);
+   Kmeans.Run (kmeans_obj, 12);
+   Kmeans.Put (kmeans_obj);
+   data.Append ((6.33214128, 1.328192015));
+   Kmeans.Run (kmeans_obj, 12);
+   Kmeans.Put (kmeans_obj);
 end kmeans_driver;

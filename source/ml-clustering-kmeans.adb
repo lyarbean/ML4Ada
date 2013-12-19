@@ -14,6 +14,9 @@ package body ML.Clustering.Kmeans is
    procedure Free is new Ada.Unchecked_Deallocation
       (Cluster_Array, Cluster_Array_Access);
 
+   ----------------------------------------------------------------------------
+   procedure Reset (o : in out Object);
+   ----------------------------------------------------------------------------
    procedure Initialize (o : in out Object) is
    begin
       o.Clusters := new Cluster_Array (1 .. o.k);
@@ -41,7 +44,6 @@ package body ML.Clustering.Kmeans is
       end loop;
    end Finalize;
 
-   procedure Reset (o : in out Object);
    procedure Reset (o : in out Object) is
    begin
       for c of o.Clusters.all loop
@@ -64,17 +66,15 @@ package body ML.Clustering.Kmeans is
       o.BSS       := 0.0;
       o.Iter      := 0;
    end Reset;
+   ----------------------------------------------------------------------------
 
-   procedure Run (o : in out Object;
-      items : Real_Array_Vector; m : Positive := 10) is
+   procedure Run (o : in out Object; m : Positive := 10) is
       n : Index_Type;
    begin
-      if items.Is_Empty then
+      if Length = 0 then
          raise Zero_N;
       end if;
-
-      n := Index_Type (items.Length);
-
+      n := Index_Type (Length);
       if o.k < 2 then
          raise Small_K;
       end if;
@@ -82,7 +82,6 @@ package body ML.Clustering.Kmeans is
       if n < o.k then
          raise Huge_K;
       end if;
-
       declare
          updated : Boolean;
          dist    : Real;
@@ -117,7 +116,7 @@ package body ML.Clustering.Kmeans is
                if o.Centroids (j) /= null then
                   raise Program_Error;
                end if;
-               o.Centroids (j) := new Real_Array'(items (c));
+               o.Centroids (j) := new Real_Array'(Element (c));
 
                o.Clusters (j).Include (c);
                o.Withins (c) := j;
@@ -136,7 +135,7 @@ package body ML.Clustering.Kmeans is
                for jk in o.Centroids'Range loop
                   --  TODO Optimize this
                   tmp := MLP.Squared_Euclidean_Distance
-                     (items (jn), o.Centroids (jk).all);
+                     (Element (jn), o.Centroids (jk).all);
                   if tmp < dist then
                      dist := tmp;
                      idx := jk;
@@ -159,7 +158,7 @@ package body ML.Clustering.Kmeans is
                o.Centroids (j).all := (others => 0.0);
 
                for jj of o.Clusters (j)  loop
-                  MLP.Add (o.Centroids (j).all, items (jj));
+                  MLP.Add (o.Centroids (j).all, Element (jj));
                end loop;
 
                MLP.Divide (o.Centroids (j).all, Real (o.Clusters (j).Length));
@@ -174,12 +173,12 @@ package body ML.Clustering.Kmeans is
             for j in o.Centroids'Range loop
                for jj of o.Clusters (j)  loop
                   o.WSS (j) := o.WSS (j) + MLP.Squared_Euclidean_Distance
-                     (o.Centroids (j).all, items (jj));
+                     (o.Centroids (j).all, Element (jj));
                end loop;
             end loop;
 
             for j in 1 .. n loop
-               MLP.Add (m, items (j));
+               MLP.Add (m, Element (j));
             end loop;
 
             MLP.Divide (m, Real (n));
@@ -193,6 +192,7 @@ package body ML.Clustering.Kmeans is
          end WSS_BSS;
       end;
    end Run;
+   ----------------------------------------------------------------------------
 
    procedure Put (o : Object) is
       use Ada.Text_IO;
@@ -237,4 +237,5 @@ package body ML.Clustering.Kmeans is
       New_Line;
       Put_Line ("Iterated " & o.Iter'Img & " times");
    end Put;
+
 end ML.Clustering.Kmeans;
