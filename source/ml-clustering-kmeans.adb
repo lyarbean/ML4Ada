@@ -15,7 +15,7 @@ package body ML.Clustering.Kmeans is
       (Cluster_Array, Cluster_Array_Access);
 
    ----------------------------------------------------------------------------
-   procedure Reset (o : in out Object);
+   procedure Reset (o : in out Object) with Inline;
    ----------------------------------------------------------------------------
    procedure Initialize (o : in out Object) is
    begin
@@ -74,7 +74,9 @@ package body ML.Clustering.Kmeans is
       if Length = 0 then
          raise Zero_N;
       end if;
+
       n := Index_Type (Length);
+
       if o.k < 2 then
          raise Small_K;
       end if;
@@ -82,6 +84,7 @@ package body ML.Clustering.Kmeans is
       if n < o.k then
          raise Huge_K;
       end if;
+
       declare
          updated : Boolean;
          dist    : Real;
