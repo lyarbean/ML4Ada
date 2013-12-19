@@ -1,10 +1,7 @@
 with ML.Clustering.Kmeans;
-with Ada.Strings.Unbounded;
-use Ada.Strings.Unbounded;
-with Ada.Text_IO;
-use Ada.Text_IO;
+
 procedure kmeans_driver is
-   data : aliased ML.Real_Array_Vector;
+   data : ML.Real_Array_Vector;
    kmeans_obj : ML.Clustering.Kmeans.Object (3);
 begin
    data.Append ((1.15051216, 0.472122276));
@@ -57,9 +54,9 @@ begin
    data.Append ((0.32893477, 0.637998218));
    data.Append ((0.77677226, 0.017112272));
    data.Append ((0.33214128, 0.328192015));
-   ML.Clustering.Kmeans.Run (kmeans_obj, data'Access, 12);
-   ML.Clustering.Kmeans.Run (kmeans_obj, data'Access, 12);
-   ML.Clustering.Kmeans.Run (kmeans_obj, data'Access, 12);
-   ML.Clustering.Kmeans.Run (kmeans_obj, data'Access, 12);
+   ML.Clustering.Kmeans.Run (kmeans_obj, data, 12);
+   ML.Clustering.Kmeans.Run (kmeans_obj, data, 12);
+   ML.Clustering.Kmeans.Run (kmeans_obj, data, 12);
+   ML.Clustering.Kmeans.Run (kmeans_obj, data, 12);
    ML.Clustering.Kmeans.Put (kmeans_obj);
 end kmeans_driver;

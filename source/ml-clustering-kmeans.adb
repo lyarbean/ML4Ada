@@ -59,28 +59,28 @@ package body ML.Clustering.Kmeans is
          end if;
       end loop;
 
-      o.WSS.all := (others => 0.0);
+      o.WSS.all   := (others => 0.0);
       o.Centroids := (others => null);
-      o.BSS := 0.0;
-      o.Iter := 0;
+      o.BSS       := 0.0;
+      o.Iter      := 0;
    end Reset;
 
    procedure Run (o : in out Object;
-      items : not null access Real_Array_Vector; m : Positive := 10) is
+      items : Real_Array_Vector; m : Positive := 10) is
       n : Index_Type;
    begin
       if items.Is_Empty then
-         raise ZERO_N;
+         raise Zero_N;
       end if;
 
       n := Index_Type (items.Length);
 
-      if o.k < 2  then
-         raise SMALL_K;
+      if o.k < 2 then
+         raise Small_K;
       end if;
 
       if n < o.k then
-         raise HUGE_K;
+         raise Huge_K;
       end if;
 
       declare
@@ -90,7 +90,7 @@ package body ML.Clustering.Kmeans is
          idx     : Index_Type;
          g       : ANDR.Generator;
       begin
-         --  Reinitialize if we ran before, a bit expensive..
+         --  Reinitialize if we run again
          if o.Withins /= null then
             Reset (o);
          end if;
@@ -115,9 +115,9 @@ package body ML.Clustering.Kmeans is
                end loop;
 
                if o.Centroids (j) /= null then
-                  raise PROGRAM_ERROR;
+                  raise Program_Error;
                end if;
-               o.Centroids (j) := new Real_Array'(items.all (c));
+               o.Centroids (j) := new Real_Array'(items (c));
 
                o.Clusters (j).Include (c);
                o.Withins (c) := j;
@@ -136,7 +136,7 @@ package body ML.Clustering.Kmeans is
                for jk in o.Centroids'Range loop
                   --  TODO Optimize this
                   tmp := MLP.Squared_Euclidean_Distance
-                     (items.all (jn), o.Centroids (jk).all);
+                     (items (jn), o.Centroids (jk).all);
                   if tmp < dist then
                      dist := tmp;
                      idx := jk;
@@ -159,7 +159,7 @@ package body ML.Clustering.Kmeans is
                o.Centroids (j).all := (others => 0.0);
 
                for jj of o.Clusters (j)  loop
-                  MLP.Add (o.Centroids (j).all, items.all (jj));
+                  MLP.Add (o.Centroids (j).all, items (jj));
                end loop;
 
                MLP.Divide (o.Centroids (j).all, Real (o.Clusters (j).Length));
@@ -174,12 +174,12 @@ package body ML.Clustering.Kmeans is
             for j in o.Centroids'Range loop
                for jj of o.Clusters (j)  loop
                   o.WSS (j) := o.WSS (j) + MLP.Squared_Euclidean_Distance
-                     (o.Centroids (j).all, items.all (jj));
+                     (o.Centroids (j).all, items (jj));
                end loop;
             end loop;
 
             for j in 1 .. n loop
-               MLP.Add (m, items.all (j));
+               MLP.Add (m, items (j));
             end loop;
 
             MLP.Divide (m, Real (n));
