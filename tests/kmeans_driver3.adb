@@ -22,7 +22,7 @@ procedure kmeans_driver3 is
       return data.Element (x);
    end Element;
 
-   package Kmeans is new ML.Clustering.Kmeans (Length, Element);
+   package Kmeans is new ML.Clustering.Kmeans; --  (Length, Element);
    kmeans_obj : Kmeans.Object (3);
 
    file : TIO.File_Type;

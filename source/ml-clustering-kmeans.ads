@@ -2,8 +2,8 @@ pragma License (GPL);
 with Ada.Containers.Ordered_Sets;
 with Ada.Finalization;
 generic
-   with function Length return Integer;
-   with function Element (x : Index_Type) return Real_Array;
+   with function Length return Integer is <>;
+   with function Element (x : Index_Type) return Real_Array is <>;
 
 package ML.Clustering.Kmeans is
    type Object (k : Index_Type) is new Ada.Finalization.Limited_Controlled

@@ -13,7 +13,7 @@ procedure primitive_driver is
 
 begin
    Put_Line (Real'Image (s1 (1) ** 4) &
-             Real'Image (Elementary_Functions.Log (s1 (2))));
+             Real'Image (ML_Elementary_Functions.Log (s1 (2))));
    Put_Line ("max of s1: " & Max (s1, ind)'Img);
    Put_Line ("min of s1: " & Min (s1, ind)'Img);
    Put_Line ("mean of s1: " & Mean (s1, ind)'Img);
@@ -23,4 +23,7 @@ begin
    Put_Line ("3rd normalized_moment of s1: " & Normalized_Moment (s1, 3)'Img);
    Put_Line ("3rd normalized_moment of s1: " &
              Normalized_Moment (s1, ind, 3)'Img);
+   Put_Line (Real'Image (Normal (0.0, 4.0, 10.0)));
+   Put_Line (Real'Image (Log_Normal (2.0, 4.0, 10.0)));
+   Put_Line (Real'Image (Log_Normal (1.0, 4.0, 11.0)));
 end primitive_driver;

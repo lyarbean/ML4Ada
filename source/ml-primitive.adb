@@ -1,7 +1,6 @@
 pragma License (GPL);
 package body ML.Primitive is
-   use Elementary_Functions;
-
+   use ML_Elementary_Functions;
    procedure Add (a : in out Real_Array;  b : Real_Array) is
    begin
       for j in a'Range loop
@@ -218,6 +217,23 @@ package body ML.Primitive is
       vn := vn / Real (a'Length);
       return vn / v2;
    end Normalized_Moment;
+   --------------------
+   --  Distribution  --
+   --------------------
+   function Normal (x, m, s : Real) return Real is
+   begin
+      return Exp (-((x - m) / s) ** 2 / 2.0) /
+         (Sqrt (2.0 * Ada.Numerics.Pi) * s);
+   end Normal;
+
+   function Log_Normal (x, m, s : Real) return Real is
+   begin
+      if x <= 0.0 then
+         return 0.0;
+      end if;
+      return Exp (-((Log (x) - m) / s) ** 2 / 2.0) /
+      (Sqrt (2.0 * Ada.Numerics.Pi) * s * x);
+   end Log_Normal;
 
    ---------------
    -- Distances --

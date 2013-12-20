@@ -2,9 +2,8 @@ pragma License (GPL);
 with Ada.Numerics.Generic_Elementary_Functions;
 package ML.Primitive is
    --  Math functions for Real
-   package Elementary_Functions is new
-   Ada.Numerics.Generic_Elementary_Functions (Real);
-
+   package ML_Elementary_Functions is new
+      Ada.Numerics.Generic_Elementary_Functions (Real);
    Index_mismatched : exception;
 
    procedure Add (a : in out Real_Array; b : Real_Array)
@@ -43,10 +42,15 @@ package ML.Primitive is
       (a : Real_Array; b : Index_Array; n : Positive) return Real;
    function Normalized_Moment (a : Real_Array; n : Positive) return Real;
    --  mode
+   --------------------
+   --  Distribution  --
+   --------------------
+   function Normal (x, m, s : Real) return Real with Inline;
+   function Log_Normal (x, m, s : Real) return Real with Inline;
 
-   ---------------
-   -- Distances --
-   ---------------
+   -----------------
+   --  Distances  --
+   -----------------
    function Squared_Euclidean_Distance
       (a, b : Real_Array) return Real with inline;
 
