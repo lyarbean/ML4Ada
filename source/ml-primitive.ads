@@ -4,7 +4,6 @@ package ML.Primitive is
    --  Math functions for Real
    package ML_Elementary_Functions is new
       Ada.Numerics.Generic_Elementary_Functions (Real);
-   Index_mismatched : exception;
 
    procedure Add (a : in out Real_Array; b : Real_Array)
       with Pre => a'First in b'Range and a'Last in b'Range;
@@ -13,10 +12,10 @@ package ML.Primitive is
    procedure Divide (a : in out Real_Array; b : Real);
    function "*" (a : Real_Array; b : Real) return Real_Array;
 
-   function Max (a : Real_Array; b : Index_Array) return Real with inline;
-   function Max (a : Real_Array) return Real with inline;
-   function Min (a : Real_Array; b : Index_Array) return Real with inline;
-   function Min (a : Real_Array) return Real with inline;
+   function Max (a : Real_Array; b : Index_Array) return Real with Inline;
+   function Max (a : Real_Array) return Real with Inline;
+   function Min (a : Real_Array; b : Index_Array) return Real with Inline;
+   function Min (a : Real_Array) return Real with Inline;
    ------------------
    --  Statistics  --
    ------------------
@@ -52,15 +51,15 @@ package ML.Primitive is
    --  Distances  --
    -----------------
    function Squared_Euclidean_Distance
-      (a, b : Real_Array) return Real with inline;
+      (a, b : Real_Array) return Real with Inline;
 
-   function Euclidean_Distance (a, b : Real_Array) return Real with inline;
+   function Euclidean_Distance (a, b : Real_Array) return Real with Inline;
 
-   function Manhattan_Distance (a, b : Real_Array) return Real with inline;
+   function Manhattan_Distance (a, b : Real_Array) return Real with Inline;
 
-   function Sup_Distance (a, b : Real_Array) return Real with inline;
+   function Sup_Distance (a, b : Real_Array) return Real with Inline;
 
-   function Cosine_Distance (a, b : Real_Array) return Real with inline;
+   function Cosine_Distance (a, b : Real_Array) return Real with Inline;
 
    --  hamming_distance
    --  simple_matching_distance
