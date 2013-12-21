@@ -26,4 +26,5 @@ begin
    Put_Line (Real'Image (Normal (0.0, 4.0, 10.0)));
    Put_Line (Real'Image (Log_Normal (2.0, 4.0, 10.0)));
    Put_Line (Real'Image (Log_Normal (1.0, 4.0, 11.0)));
+   Put_Line (Real'Image (Normal (1.0, 4.0, 11.0)));
 end primitive_driver;

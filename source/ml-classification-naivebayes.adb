@@ -89,7 +89,7 @@ package body ML.Classification.Naivebayes is
       New_Line;
 
       for c in Class_Type loop
-         Put (Real (o.Priori(c)) /  Real (tmp), Fore => 2, Exp => 4);
+         Put (Real (o.Priori (c)) / Real (tmp), Fore => 2, Exp => 4);
       end loop;
 
       New_Line;
@@ -135,7 +135,8 @@ package body ML.Classification.Naivebayes is
    end Put;
 
    type Prediction is array (Class_Type) of Real;
-   procedure Predict (o : Object; x : Feature_Array) is
+   procedure Predict
+      (o : Object; x : Feature_Array; d : Distribution_Type := Normal) is
    begin
       if Length = 0 then
          return;
@@ -146,11 +147,20 @@ package body ML.Classification.Naivebayes is
          ps : Real       := 0.0;
       begin
          for c in Class_Type loop
-            for f in Feature_Type loop
-               p (c) := p (c) *
-                  MLP.Normal (x (f), o.Means (c, f), o.SDs (c, f));
-            end loop;
-
+            case d is
+               when Normal =>
+                  for f in Feature_Type loop
+                     p (c) := p (c) *
+                        MLP.Normal (x (f), o.Means (c, f), o.SDs (c, f));
+                  end loop;
+               when Log_Normal =>
+                  for f in Feature_Type loop
+                     p (c) := p (c) *
+                        MLP.Log_Normal (x (f), o.Means (c, f), o.SDs (c, f));
+                  end loop;
+               when others =>
+                  raise Not_Implemented_Distribution;
+            end case;
             p (c) := p (c) * Real (o.Priori (c)) / Real (Length);
             ps := ps + p (c);
          end loop;
@@ -170,7 +180,9 @@ package body ML.Classification.Naivebayes is
       end;
    end Predict;
 
-   function Predict (o : Object; x : Feature_Array) return Class_Type is
+   function Predict
+      (o : Object; x : Feature_Array; d : Distribution_Type := Normal)
+      return Class_Type is
    begin
       if Length = 0 then
          return Class_Type'First;
@@ -182,10 +194,20 @@ package body ML.Classification.Naivebayes is
          r  : Class_Type;
       begin
          for c in Class_Type loop
-            for f in Feature_Type loop
-               p (c) := p (c) * MLP.Normal (x (f), o.Means (c, f), o.SDs (c, f));
-            end loop;
-
+            case d is
+               when Normal =>
+                  for f in Feature_Type loop
+                     p (c) := p (c) *
+                        MLP.Normal (x (f), o.Means (c, f), o.SDs (c, f));
+                  end loop;
+               when Log_Normal =>
+                  for f in Feature_Type loop
+                     p (c) := p (c) *
+                        MLP.Log_Normal (x (f), o.Means (c, f), o.SDs (c, f));
+                  end loop;
+               when others =>
+                  raise Not_Implemented_Distribution;
+            end case;
             p (c) := p (c) * Real (o.Priori (c)) / Real (Length);
             ps := ps + p (c);
          end loop;

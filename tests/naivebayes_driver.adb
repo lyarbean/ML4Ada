@@ -45,7 +45,7 @@ procedure naivebayes_driver is
    package NB is new ML.Classification.Naivebayes
       (My_Feature, My_Class, My_Array, Length, Belong, Element);
 
-   NB_Obj : NB.Object (ML.Normal);
+   NB_Obj : NB.Object;
    file : TIO.File_Type;
    f : My_Array;
    x : ML.Real;
@@ -64,6 +64,7 @@ begin
    NB_Obj.Train;
    NB_Obj.Put;
    NB_Obj.Predict (Element (52));
+   NB_Obj.Predict (Element (52), ML.Log_Normal);
    TIO.New_Line;
    for c of data loop
       TIO.Put (NB_Obj.Predict (c)'Img & "   ");
