@@ -6,6 +6,9 @@ package body ML.Classification.Naivebayes is
    package MLP is new ML.Primitive (Feature_Type, Feature_Array);
    package Real_IO is new Ada.Text_IO.Float_IO (Real);
    use Real_IO;
+   type Matrix_Type is array (Class_Type, Feature_Type) of Real;
+   type Priori_Type is array (Class_Type) of Integer;
+
    procedure Initialize (o : in out Object) is
    begin
       o.Means      := new Matrix_Type;
