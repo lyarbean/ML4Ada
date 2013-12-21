@@ -8,6 +8,7 @@ package body ML.Primitive is
          a (j) := a (j) + b (j);
       end loop;
    end Add;
+
    procedure Sub (a : in out Real_Array;  b : Real_Array) is
    begin
       for j in a'Range loop
@@ -15,14 +16,15 @@ package body ML.Primitive is
          a (j) := a (j) - b (j);
       end loop;
    end Sub;
+
    procedure Multiply (a : in out Real_Array; b : Real) is
    begin
-
       for c of a loop
          pragma Loop_Optimize (Vector);
          c := c * b;
       end loop;
    end Multiply;
+
    procedure Divide (a : in out Real_Array; b : Real) is
    begin
       for c of a loop
@@ -30,6 +32,7 @@ package body ML.Primitive is
          c := c / b;
       end loop;
    end Divide;
+
    function "*" (a : Real_Array; b : Real) return Real_Array is
    begin
       return r : Real_Array := a do
