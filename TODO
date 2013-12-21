@@ -1,13 +1,16 @@
-0. Primtive types and operations
+0. Basic Statistics
 1. Classification and Clustering algorithms
     a. NaiveBayes
         i. Text
-        ii. Normal distribution, ie. numeric
-
+        ii. Numerics
+            -  Different features have different distributions, passing a
+               Distribution_Array to predict with specified distributions.
+            -  Implement distribution functions
     b. KNN
 
     c. Apriori
 
+    d. lca
     ...
 
     z. SVM
