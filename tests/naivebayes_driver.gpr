@@ -1,0 +1,12 @@
+project Naivebayes_Driver is
+for Source_Dirs use ("../source", ".");
+for Object_Dir use "./obj";
+for Library_Dir use "./lib";
+for Exec_Dir use "./bin";
+for Main use ("naivebayes_driver");
+package Compiler is
+   for Default_Switches ("Ada")
+   use ("-gnaty", "-gnatyg", "-pipe", "-v" , "-O3",
+        "-gnat2012", "-march=native", "-mtune=native");
+end Compiler;
+end Naivebayes_Driver;
