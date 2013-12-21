@@ -4,8 +4,8 @@ generic
    type Class_Type   is (<>);
    type Feature_Array is array (Feature_Type) of Real;
    with function Length return Natural;
-   with function Belong  (x : Index_Type) return Class_Type;
-   with function Element (x : Index_Type) return Feature_Array;
+   with function Belong  (x : Positive) return Class_Type;
+   with function Element (x : Positive) return Feature_Array;
 package ML.Classification.Naivebayes is
    type Object is new Ada.Finalization.Limited_Controlled with private;
    procedure Train   (o : Object);

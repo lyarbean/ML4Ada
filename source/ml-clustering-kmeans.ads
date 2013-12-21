@@ -15,11 +15,11 @@ package ML.Clustering.Kmeans is
    Small_K,  Huge_K, Zero_N : exception;
 
 private
+   package Index_Set is new Ada.Containers.Ordered_Sets (Positive);
    type Element_Array is array (Positive range <>) of Element_Type;
    type Element_Array_Access is access Element_Array;
+   type Real_Array is array (Positive range <>) of Real;
    type Real_Array_Access is access Real_Array;
-
-   package Index_Set is new Ada.Containers.Ordered_Sets (Positive);
    type Index_Array is array (Positive range <>) of Positive;
    type Index_Array_Access is access Index_Array;
    type Cluster_Array is array (Positive range <>) of Index_Set.Set;

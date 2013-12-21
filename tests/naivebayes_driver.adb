@@ -8,14 +8,14 @@ procedure naivebayes_driver is
    type My_Class is (Setosa, Versicolor, Virginica);
    type My_Array is array (My_Feature) of ML.Real;
    package My_Array_Vector_Package is new
-   Ada.Containers.Vectors (ML.Index_Type, My_Array);
+   Ada.Containers.Vectors (Positive, My_Array);
    use My_Array_Vector_Package;
 
    data : Vector;
 
    function Length return Natural;
-   function Element (x : ML.Index_Type) return My_Array;
-   function Belong (x : ML.Index_Type) return My_Class;
+   function Element (x : Positive) return My_Array;
+   function Belong (x : Positive) return My_Class;
 
    function Length return Natural is
    begin
@@ -25,12 +25,12 @@ procedure naivebayes_driver is
       return Natural (data.Length);
    end Length;
 
-   function Element (x : ML.Index_Type) return My_Array is
+   function Element (x : Positive) return My_Array is
    begin
       return My_Array '(data.Element (x));
    end Element;
 
-   function Belong (x : ML.Index_Type) return My_Class is
+   function Belong (x : Positive) return My_Class is
       use ML;
    begin
       if x <= 50 then

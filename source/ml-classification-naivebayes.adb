@@ -3,7 +3,7 @@ with Ada.Unchecked_Deallocation;
 with Ada.Text_IO;
 use Ada.Text_IO;
 package body ML.Classification.Naivebayes is
-   package MLP renames ML.Primitive;
+   package MLP is new ML.Primitive (Feature_Type, Feature_Array);
    package Real_IO is new Ada.Text_IO.Float_IO (Real);
    use Real_IO;
    procedure Initialize (o : in out Object) is
@@ -28,7 +28,7 @@ package body ML.Classification.Naivebayes is
    end Finalize;
 
    procedure Train (o : Object) is
-      n : Index_Type;
+      n : Positive;
       f : Feature_Array;
       c : Class_Type;
    begin
@@ -36,7 +36,7 @@ package body ML.Classification.Naivebayes is
          return;
       end if;
 
-      n := Index_Type (Length);
+      n := Positive (Length);
 
       for j in 1 .. n loop
          f := Element (j);
@@ -66,7 +66,7 @@ package body ML.Classification.Naivebayes is
       for j in Class_Type loop
          if o.Priori (j) > 1 then
             for jj in Feature_Type loop
-               o.SDs (j, jj) := MLP.ML_Elementary_Functions.Sqrt
+               o.SDs (j, jj) := MLP.GEF.Sqrt
                   (o.SDs (j, jj) / Real (o.Priori (j) - 1));
             end loop;
          end if;

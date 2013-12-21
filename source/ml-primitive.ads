@@ -1,46 +1,40 @@
 pragma License (GPL);
 with Ada.Numerics.Generic_Elementary_Functions;
+
+generic
+   type Index_Type is (<>);
+   type Element_Type is array (Index_Type) of Real;
 package ML.Primitive is
    --  Math functions for Real
-   package ML_Elementary_Functions is new
-      Ada.Numerics.Generic_Elementary_Functions (Real);
+   package GEF is new Ada.Numerics.Generic_Elementary_Functions (Real);
 
-   procedure Add (a : in out Real_Array; b : Real_Array)
-      with Pre => a'First in b'Range and a'Last in b'Range;
-   procedure Sub (a : in out Real_Array; b : Real_Array);
-   procedure Multiply (a : in out Real_Array; b : Real);
-   procedure Divide (a : in out Real_Array; b : Real);
-   function "*" (a : Real_Array; b : Real) return Real_Array;
+   procedure Add (a : in out Element_Type; b : Element_Type);
+   procedure Sub (a : in out Element_Type; b : Element_Type);
+   procedure Multiply (a : in out Element_Type; b : Real);
+   procedure Divide (a : in out Element_Type; b : Real);
+   function "*" (a : Element_Type; b : Real) return Element_Type;
 
-   function Max (a : Real_Array; b : Index_Array) return Real with Inline;
-   function Max (a : Real_Array) return Real with Inline;
-   function Min (a : Real_Array; b : Index_Array) return Real with Inline;
-   function Min (a : Real_Array) return Real with Inline;
+   function Max (a : Element_Type) return Real with Inline;
+   function Min (a : Element_Type) return Real with Inline;
    ------------------
    --  Statistics  --
    ------------------
 
-   function Sum (a : Real_Array) return Real;
+   function Sum (a : Element_Type) return Real;
    --  1st raw moment
-   function Mean (a : Real_Array; b : Index_Array) return Real;
-   function Mean (a : Real_Array) return Real;
+   function Mean (a : Element_Type) return Real;
 
    --  2nd central moment
-   function Variance
-      (a : Real_Array; b : Index_Array; Bessel : Boolean := True) return Real;
-   function Variance (a : Real_Array; Bessel : Boolean := True) return Real;
+   function Variance (a : Element_Type; Bessel : Boolean := True) return Real;
 
-   function Standard_Deviation (a : Real_Array; b : Index_Array) return Real;
-   function Standard_Deviation (a : Real_Array) return Real;
+   function Standard_Deviation (a : Element_Type) return Real;
 
-   function Central_Moment
-      (a : Real_Array; b : Index_Array; n : Positive) return Real;
-   function Central_Moment (a : Real_Array; n : Positive) return Real;
+   function Central_Moment (a : Element_Type; n : Positive) return Real;
 
-   function Normalized_Moment
-      (a : Real_Array; b : Index_Array; n : Positive) return Real;
-   function Normalized_Moment (a : Real_Array; n : Positive) return Real;
+   function Normalized_Moment (a : Element_Type; n : Positive) return Real;
    --  mode
+
+   --  TODO Migrate
    --------------------
    --  Distribution  --
    --------------------
@@ -50,19 +44,17 @@ package ML.Primitive is
    -----------------
    --  Distances  --
    -----------------
-   generic
-      type Index_Type is (<>);
-      type Element_Array is array (Index_Type) of Real;
    function Squared_Euclidean_Distance
-      (a, b : Element_Array) return Real with Inline;
+      (a, b : Element_Type) return Real with Inline;
 
-   --  function Euclidean_Distance (a, b : Real_Array) return Real with Inline;
+   --  function Euclidean_Distance (a, b : Element_Type)
+   --     return Real with Inline;
 
-   function Manhattan_Distance (a, b : Real_Array) return Real with Inline;
+   function Manhattan_Distance (a, b : Element_Type) return Real with Inline;
 
-   function Sup_Distance (a, b : Real_Array) return Real with Inline;
+   function Sup_Distance (a, b : Element_Type) return Real with Inline;
 
-   function Cosine_Distance (a, b : Real_Array) return Real with Inline;
+   function Cosine_Distance (a, b : Element_Type) return Real with Inline;
 
    --  hamming_distance
    --  simple_matching_distance

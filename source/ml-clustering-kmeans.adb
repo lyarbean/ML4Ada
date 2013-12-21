@@ -5,8 +5,9 @@ with Ada.Numerics.Discrete_Random;
 with Ada.Text_IO;
 
 package body ML.Clustering.Kmeans is
-   package MLP renames ML.Primitive;
-   function SED is new ML.Primitive.Squared_Euclidean_Distance (Dim_Type, Element_Type);
+   package MLP is new ML.Primitive (Dim_Type, Element_Type);
+   function SED (a, b : Element_Type) return Real
+      renames MLP.Squared_Euclidean_Distance;
    package ANDR is new Ada.Numerics.Discrete_Random (Positive);
    procedure Free is new Ada.Unchecked_Deallocation
       (Element_Array, Element_Array_Access);
@@ -24,7 +25,7 @@ package body ML.Clustering.Kmeans is
    begin
       o.Clusters  := new Cluster_Array (1 .. o.k);
       o.Centroids := new Element_Array (1 .. o.k);
-      o.WSS       := new Real_Array (1 .. Index_Type (o.k));
+      o.WSS       := new Real_Array (1 .. o.k);
 
       o.Centroids.all := (others => (others => 0.0));
       o.WSS.all       := (others => 0.0);
@@ -129,7 +130,7 @@ package body ML.Clustering.Kmeans is
 
                for jk in o.Centroids'Range loop
                   --  TODO Optimize this
-                  tmp := SED (Element (jn), o.Centroids (jk));
+                  tmp := SED(Element (jn), o.Centroids (jk));
                   if tmp < dist then
                      dist := tmp;
                      idx := jk;
@@ -171,7 +172,7 @@ package body ML.Clustering.Kmeans is
          begin
             for j in o.Centroids'Range loop
                for jj of o.Clusters (j)  loop
-                  o.WSS (Index_Type (j)) := o.WSS (Index_Type (j)) +
+                  o.WSS (j) := o.WSS (j) +
                      SED (o.Centroids (j), Element (jj));
                end loop;
             end loop;
@@ -234,8 +235,15 @@ package body ML.Clustering.Kmeans is
       end loop;
 
       New_Line;
-      Put_Line ("(between_SS / total_SS =  "
-      & Real'Image (o.BSS * 100.0 / (MLP.Sum (o.WSS.all) + o.BSS)) & " %)");
+      declare
+         s : Real := 0.0;
+      begin
+         for c of o.WSS.all loop
+            s := s + c;
+         end loop;
+         s := o.BSS * 100.0 / (s + o.BSS);
+         Put_Line ("(between_SS / total_SS =  " & s'Img & " %)");
+      end;
       New_Line;
       Put_Line ("Iterated " & o.Iter'Img & " times");
    end Put;

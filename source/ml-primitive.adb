@@ -1,7 +1,7 @@
 pragma License (GPL);
 package body ML.Primitive is
-   use ML_Elementary_Functions;
-   procedure Add (a : in out Real_Array;  b : Real_Array) is
+   use GEF;
+   procedure Add (a : in out Element_Type;  b : Element_Type) is
    begin
       for j in a'Range loop
          pragma Loop_Optimize (Vector);
@@ -9,7 +9,7 @@ package body ML.Primitive is
       end loop;
    end Add;
 
-   procedure Sub (a : in out Real_Array;  b : Real_Array) is
+   procedure Sub (a : in out Element_Type;  b : Element_Type) is
    begin
       for j in a'Range loop
          pragma Loop_Optimize (Vector);
@@ -17,7 +17,7 @@ package body ML.Primitive is
       end loop;
    end Sub;
 
-   procedure Multiply (a : in out Real_Array; b : Real) is
+   procedure Multiply (a : in out Element_Type; b : Real) is
    begin
       for c of a loop
          pragma Loop_Optimize (Vector);
@@ -25,7 +25,7 @@ package body ML.Primitive is
       end loop;
    end Multiply;
 
-   procedure Divide (a : in out Real_Array; b : Real) is
+   procedure Divide (a : in out Element_Type; b : Real) is
    begin
       for c of a loop
          pragma Loop_Optimize (Vector);
@@ -33,9 +33,9 @@ package body ML.Primitive is
       end loop;
    end Divide;
 
-   function "*" (a : Real_Array; b : Real) return Real_Array is
+   function "*" (a : Element_Type; b : Real) return Element_Type is
    begin
-      return r : Real_Array := a do
+      return r : Element_Type := a do
          for c of r loop
             pragma Loop_Optimize (Vector);
             c := c * b;
@@ -43,18 +43,18 @@ package body ML.Primitive is
       end return;
    end "*";
 
-   function Max (a : Real_Array; b : Index_Array) return Real is
-      m : Real := a (b (b'First));
-   begin
-      for c of b loop
-         if a (c) > m then
-            m := a (c);
-         end if;
-      end loop;
-      return m;
-   end Max;
+   --   function Max (a : Element_Type; b : Index_Array) return Real is
+   --      m : Real := a (b (b'First));
+   --   begin
+   --      for c of b loop
+   --         if a (c) > m then
+   --            m := a (c);
+   --         end if;
+   --      end loop;
+   --      return m;
+   --   end Max;
 
-   function Max (a : Real_Array) return Real is
+   function Max (a : Element_Type) return Real is
       m : Real := a (a'First);
    begin
       for c of a loop
@@ -65,18 +65,18 @@ package body ML.Primitive is
       return m;
    end Max;
 
-   function Min (a : Real_Array; b : Index_Array) return Real is
-      m : Real := a (b (b'First));
-   begin
-      for c of b loop
-         if a (c) < m then
-            m := a (c);
-         end if;
-      end loop;
-      return m;
-   end Min;
+   --   function Min (a : Element_Type; b : Index_Array) return Real is
+   --      m : Real := a (b (b'First));
+   --   begin
+   --      for c of b loop
+   --         if a (c) < m then
+   --            m := a (c);
+   --         end if;
+   --      end loop;
+   --      return m;
+   --   end Min;
 
-   function Min (a : Real_Array) return Real is
+   function Min (a : Element_Type) return Real is
       m : Real := a (a'First);
    begin
       for c of a loop
@@ -87,7 +87,7 @@ package body ML.Primitive is
       return m;
    end Min;
 
-   function Sum (a : Real_Array) return Real is
+   function Sum (a : Element_Type) return Real is
       m : Real := 0.0;
    begin
       for c of a loop
@@ -96,17 +96,17 @@ package body ML.Primitive is
       return m;
    end Sum;
 
-   function Mean (a : Real_Array; b : Index_Array) return Real is
-      m : Real := 0.0;
-   begin
-      for c of b loop
-         m := m + a (c);
-      end loop;
-      m := m / Real (b'Length);
-      return m;
-   end Mean;
+   --   function Mean (a : Element_Type; b : Index_Array) return Real is
+   --      m : Real := 0.0;
+   --   begin
+   --      for c of b loop
+   --         m := m + a (c);
+   --      end loop;
+   --      m := m / Real (b'Length);
+   --      return m;
+   --   end Mean;
 
-   function Mean (a : Real_Array) return Real is
+   function Mean (a : Element_Type) return Real is
       m : Real := 0.0;
    begin
       for c of a loop
@@ -117,24 +117,25 @@ package body ML.Primitive is
    end Mean;
 
    --  E(x^2) - E(x)^2
-   function Variance
-      (a : Real_Array; b : Index_Array; Bessel : Boolean := True)
-      return Real is
-      v, m : Real := 0.0;
-   begin
-      for c of b loop
-         m := m + a (c);
-         v := v + a (c) * a (c);
-      end loop;
-      m := m / Real (b'Length);
-      v := v / Real (b'Length) - m * m;
-      if Bessel then
-         v := v * Real (b'Length) / Real (b'Length - 1);
-      end if;
-      return v;
-   end Variance;
+   --   function Variance
+   --      (a : Element_Type; b : Index_Array; Bessel : Boolean := True)
+   --      return Real is
+   --      v, m : Real := 0.0;
+   --   begin
+   --      for c of b loop
+   --         m := m + a (c);
+   --         v := v + a (c) * a (c);
+   --      end loop;
+   --      m := m / Real (b'Length);
+   --      v := v / Real (b'Length) - m * m;
+   --      if Bessel then
+   --         v := v * Real (b'Length) / Real (b'Length - 1);
+   --      end if;
+   --      return v;
+   --   end Variance;
 
-   function Variance (a : Real_Array; Bessel : Boolean := True) return Real is
+   function Variance (a : Element_Type; Bessel : Boolean := True)
+      return Real is
       v, m : Real := 0.0;
    begin
       for c of a loop
@@ -149,28 +150,30 @@ package body ML.Primitive is
       return v;
    end Variance;
 
-   function Standard_Deviation (a : Real_Array; b : Index_Array) return Real is
-   begin
-      return Sqrt (Variance (a, b));
-   end Standard_Deviation;
+   --   function Standard_Deviation (a : Element_Type; b : Index_Array)
+   --      return Real is
+   --   begin
+   --      return Sqrt (Variance (a, b));
+   --   end Standard_Deviation;
 
-   function Standard_Deviation (a : Real_Array) return Real is
+   function Standard_Deviation (a : Element_Type) return Real is
    begin
       return Sqrt (Variance (a));
    end Standard_Deviation;
 
-   function Central_Moment (a : Real_Array; b : Index_Array; n : Positive)
-      return Real is
-      m : Real := Mean (a, b);
-      v : Real := 0.0;
-   begin
-      for c of b loop
-         v := v + (a (c) - m) ** n;
-      end loop;
-      return v / Real (b'Length);
-   end Central_Moment;
+   --   function Central_Moment
+   --      (a : Element_Type; b : Index_Array; n : Positive)
+   --      return Real is
+   --      m : Real := Mean (a, b);
+   --      v : Real := 0.0;
+   --   begin
+   --      for c of b loop
+   --         v := v + (a (c) - m) ** n;
+   --      end loop;
+   --      return v / Real (b'Length);
+   --   end Central_Moment;
 
-   function Central_Moment (a : Real_Array; n : Positive) return Real is
+   function Central_Moment (a : Element_Type; n : Positive) return Real is
       m : Real := Mean (a);
       v : Real := 0.0;
    begin
@@ -180,27 +183,28 @@ package body ML.Primitive is
       return v / Real (a'Length);
    end Central_Moment;
 
-   function Normalized_Moment (a : Real_Array; b : Index_Array; n : Positive)
-      return Real is
-      m  : Real := 0.0;
-      v2 : Real := 0.0;
-      vn : Real := 0.0;
-   begin
-      for c of b loop
-         m  := m + a (c);
-      end loop;
-      m := m / Real (b'Length);
-      for c of b loop
-         v2 := v2 + (a (c) - m) * (a (c) - m);
-         vn := vn + (a (c) - m) ** n;
-      end loop;
-      v2 := v2 / Real (b'Length);
-      v2 := Sqrt (v2) ** n;
-      vn := vn / Real (b'Length);
-      return vn / v2;
-   end Normalized_Moment;
+   --   function Normalized_Moment
+   --      (a : Element_Type; b : Index_Array; n : Positive)
+   --      return Real is
+   --      m  : Real := 0.0;
+   --      v2 : Real := 0.0;
+   --      vn : Real := 0.0;
+   --   begin
+   --      for c of b loop
+   --         m  := m + a (c);
+   --      end loop;
+   --      m := m / Real (b'Length);
+   --      for c of b loop
+   --         v2 := v2 + (a (c) - m) * (a (c) - m);
+   --         vn := vn + (a (c) - m) ** n;
+   --      end loop;
+   --      v2 := v2 / Real (b'Length);
+   --      v2 := Sqrt (v2) ** n;
+   --      vn := vn / Real (b'Length);
+   --      return vn / v2;
+   --   end Normalized_Moment;
 
-   function Normalized_Moment (a : Real_Array; n : Positive) return Real is
+   function Normalized_Moment (a : Element_Type; n : Positive) return Real is
       m  : Real := 0.0;
       v2 : Real := 0.0;
       vn : Real := 0.0;
@@ -226,7 +230,7 @@ package body ML.Primitive is
    function Normal (x, m, s : Real) return Real is
    begin
       return Exp (-((x - m) / s) ** 2 / 2.0) /
-         (Sqrt (2.0 * Ada.Numerics.Pi) * s);
+      (Sqrt (2.0 * Ada.Numerics.Pi) * s);
    end Normal;
 
    function Log_Normal (x, m, s : Real) return Real is
@@ -242,7 +246,7 @@ package body ML.Primitive is
    -- Distances --
    ---------------
 
-   function Squared_Euclidean_Distance (a, b : Element_Array) return Real is
+   function Squared_Euclidean_Distance (a, b : Element_Type) return Real is
       m : Real := 0.0;
    begin
       for j in Index_Type loop
@@ -252,27 +256,27 @@ package body ML.Primitive is
       return m;
    end Squared_Euclidean_Distance;
 
-   --  function Euclidean_Distance (a, b : Real_Array) return Real is
+   --  function Euclidean_Distance (a, b : Element_Type) return Real is
    --  begin
    --    return Sqrt (Squared_Euclidean_Distance (a, b));
    --  end Euclidean_Distance;
 
-   function Manhattan_Distance (a, b : Real_Array) return Real is
+   function Manhattan_Distance (a, b : Element_Type) return Real is
       m : Real := 0.0;
    begin
-      for j in a'Range loop
+      for j in Index_Type loop
          pragma Loop_Optimize (Vector);
-         m := m + abs (a (j) - b (j + b'First - a'First));
+         m := m + abs (a (j) - b (j));
       end loop;
       return m;
    end Manhattan_Distance;
 
-   function Sup_Distance (a, b : Real_Array) return Real is
+   function Sup_Distance (a, b : Element_Type) return Real is
       m : Real := 0.0;
       d : Real;
    begin
-      for j in a'Range loop
-         d := abs (a (j) - b (j + b'First - a'First));
+      for j in Index_Type loop
+         d := abs (a (j) - b (j));
          if d > m then
             m := d;
          end if;
@@ -280,12 +284,12 @@ package body ML.Primitive is
       return m;
    end Sup_Distance;
 
-   function Cosine_Distance (a, b : Real_Array) return Real is
+   function Cosine_Distance (a, b : Element_Type) return Real is
       m, na, nb : Real := 0.0;
    begin
-      for j in a'Range loop
+      for j in Index_Type loop
          pragma Loop_Optimize (Vector);
-         m  := m  + a (j) * b (j + b'First - a'First);
+         m  := m  + a (j) * b (j);
          na := na + a (j) * a (j);
          nb := nb + b (j) * b (j);
       end loop;
