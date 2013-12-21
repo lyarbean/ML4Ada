@@ -242,20 +242,20 @@ package body ML.Primitive is
    -- Distances --
    ---------------
 
-   function Squared_Euclidean_Distance (a, b : Real_Array) return Real is
+   function Squared_Euclidean_Distance (a, b : Element_Array) return Real is
       m : Real := 0.0;
    begin
-      for j in a'Range loop
+      for j in Index_Type loop
          pragma Loop_Optimize (Vector);
-         m := m + (a (j) - b (j - a'First + b'First)) ** 2;
+         m := m + (a (j) - b (j)) ** 2;
       end loop;
       return m;
    end Squared_Euclidean_Distance;
 
-   function Euclidean_Distance (a, b : Real_Array) return Real is
-   begin
-      return Sqrt (Squared_Euclidean_Distance (a, b));
-   end Euclidean_Distance;
+   --  function Euclidean_Distance (a, b : Real_Array) return Real is
+   --  begin
+   --    return Sqrt (Squared_Euclidean_Distance (a, b));
+   --  end Euclidean_Distance;
 
    function Manhattan_Distance (a, b : Real_Array) return Real is
       m : Real := 0.0;

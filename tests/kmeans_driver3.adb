@@ -1,41 +1,48 @@
 with ML.Clustering.Kmeans;
 with Ada.Text_IO;
+with Ada.Containers.Vectors;
 
 procedure kmeans_driver3 is
    package AF is new  Ada.Text_IO.Float_IO (ML.Real);
    package TIO renames Ada.Text_IO;
-   data : ML.Real_Array_Vector;
-   --  Functions to access data
-   function Length return Integer;
-   function Element (x : ML.Index_Type) return ML.Real_Array;
 
-   function Length return Integer is
+   type My_Dim is (x, y);
+   type My_Point is array (My_Dim) of ML.Real;
+   package My_Vector is new  Ada.Containers.Vectors (Positive, My_Point);
+
+   data : My_Vector.Vector;
+
+   function Length return Natural;
+   function Element (x : Positive) return My_Point;
+
+   function Length return Natural is
    begin
       if data.Is_Empty then
          return 0;
       end if;
-      return Integer (data.Length);
+      return Natural (data.Length);
    end Length;
 
-   function Element (x : ML.Index_Type) return ML.Real_Array is
+   function Element (x : Positive) return My_Point is
    begin
       return data.Element (x);
    end Element;
 
-   package Kmeans is new ML.Clustering.Kmeans; --  (Length, Element);
+   package Kmeans is new ML.Clustering.Kmeans
+      (My_Dim, My_Point, Length, Element);
    kmeans_obj : Kmeans.Object (3);
 
    file : TIO.File_Type;
-   x, y : ML.Real;
+      z : My_Point;
 begin
    --  read from file m.t, two Real each line
    TIO.Open
       (File => file, Mode => TIO.In_File, Name => "m.t");
    Process :
    while not TIO.End_Of_File (file) loop
-      AF.Get (file, x);
-      AF.Get (file, y);
-      data.Append ((x, y));
+      AF.Get (file, z (x));
+      AF.Get (file, z (y));
+      data.Append (z);
    end loop Process;
 exception
    when TIO.End_Error => null; --  In case of blank lines

@@ -6,7 +6,10 @@ with Ada.Text_IO;
 
 package body ML.Clustering.Kmeans is
    package MLP renames ML.Primitive;
-   package ANDR is new Ada.Numerics.Discrete_Random (Index_Type);
+   function SED is new ML.Primitive.Squared_Euclidean_Distance (Dim_Type, Element_Type);
+   package ANDR is new Ada.Numerics.Discrete_Random (Positive);
+   procedure Free is new Ada.Unchecked_Deallocation
+      (Element_Array, Element_Array_Access);
    procedure Free is new Ada.Unchecked_Deallocation
       (Real_Array, Real_Array_Access);
    procedure Free is new Ada.Unchecked_Deallocation
@@ -19,13 +22,15 @@ package body ML.Clustering.Kmeans is
    ----------------------------------------------------------------------------
    procedure Initialize (o : in out Object) is
    begin
-      o.Clusters := new Cluster_Array (1 .. o.k);
-      o.Centroids := (others => null);
-      o.WSS := new Real_Array (1 .. o.k);
-      o.WSS.all := (others => 0.0);
-      o.Withins := null;
-      o.BSS := 0.0;
-      o.Iter := 0;
+      o.Clusters  := new Cluster_Array (1 .. o.k);
+      o.Centroids := new Element_Array (1 .. o.k);
+      o.WSS       := new Real_Array (1 .. Index_Type (o.k));
+
+      o.Centroids.all := (others => (others => 0.0));
+      o.WSS.all       := (others => 0.0);
+      o.Withins       := null;
+      o.BSS           := 0.0;
+      o.Iter          := 0;
    end Initialize;
 
    procedure Finalize (o : in out Object) is
@@ -37,11 +42,7 @@ package body ML.Clustering.Kmeans is
          Free (o.Withins);
       end if;
 
-      for c of o.Centroids loop
-         if c /= null then
-            Free (c);
-         end if;
-      end loop;
+      Free (o.Centroids);
    end Finalize;
 
    procedure Reset (o : in out Object) is
@@ -55,27 +56,22 @@ package body ML.Clustering.Kmeans is
          o.Withins := null;
       end if;
 
-      for c of o.Centroids loop
-         if c /= null then
-            Free (c);
-         end if;
-      end loop;
+      o.Centroids.all := (others => (others => 0.0));
 
       o.WSS.all   := (others => 0.0);
-      o.Centroids := (others => null);
       o.BSS       := 0.0;
       o.Iter      := 0;
    end Reset;
    ----------------------------------------------------------------------------
 
    procedure Run (o : in out Object; m : Positive := 10) is
-      n : Index_Type;
+      n : Positive;
    begin
       if Length = 0 then
          raise Zero_N;
       end if;
 
-      n := Index_Type (Length);
+      n := Positive (Length);
 
       if o.k < 2 then
          raise Small_K;
@@ -89,7 +85,7 @@ package body ML.Clustering.Kmeans is
          updated : Boolean;
          dist    : Real;
          tmp     : Real;
-         idx     : Index_Type;
+         idx     : Positive;
          g       : ANDR.Generator;
       begin
          --  Reinitialize if we run again
@@ -102,7 +98,7 @@ package body ML.Clustering.Kmeans is
 
          Initialize_Centroids :
          declare
-            c : Index_Type; --  centroid
+            c : Positive; --  centroid index
          begin
             ANDR.Reset (g);
 
@@ -116,11 +112,7 @@ package body ML.Clustering.Kmeans is
                   end if;
                end loop;
 
-               if o.Centroids (j) /= null then
-                  raise Program_Error;
-               end if;
-               o.Centroids (j) := new Real_Array'(Element (c));
-
+               o.Centroids (j) := Element (c);
                o.Clusters (j).Include (c);
                o.Withins (c) := j;
             end loop;
@@ -137,8 +129,7 @@ package body ML.Clustering.Kmeans is
 
                for jk in o.Centroids'Range loop
                   --  TODO Optimize this
-                  tmp := MLP.Squared_Euclidean_Distance
-                     (Element (jn), o.Centroids (jk).all);
+                  tmp := SED (Element (jn), o.Centroids (jk));
                   if tmp < dist then
                      dist := tmp;
                      idx := jk;
@@ -158,39 +149,47 @@ package body ML.Clustering.Kmeans is
 
             --  update centroids
             for j in o.Centroids'Range loop
-               o.Centroids (j).all := (others => 0.0);
+               o.Centroids (j) := (others => 0.0);
 
                for jj of o.Clusters (j)  loop
-                  MLP.Add (o.Centroids (j).all, Element (jj));
+                  for jjj in Dim_Type loop
+                     o.Centroids (j) (jjj) :=
+                        o.Centroids (j) (jjj) + Element (jj) (jjj);
+                  end loop;
                end loop;
-
-               MLP.Divide (o.Centroids (j).all, Real (o.Clusters (j).Length));
+               for jj in Dim_Type loop
+                  o.Centroids (j) (jj) :=
+                     o.Centroids (j) (jj) / Real (o.Clusters (j).Length);
+               end loop;
             end loop;
             o.Iter := jm;
          end loop Iterative;
 
          WSS_BSS :
          declare
-            m : Real_Array (o.Centroids (1)'Range) := (others => 0.0);
+            m : Element_Type := (others => 0.0);
          begin
             for j in o.Centroids'Range loop
                for jj of o.Clusters (j)  loop
-                  o.WSS (j) := o.WSS (j) + MLP.Squared_Euclidean_Distance
-                     (o.Centroids (j).all, Element (jj));
+                  o.WSS (Index_Type (j)) := o.WSS (Index_Type (j)) +
+                     SED (o.Centroids (j), Element (jj));
                end loop;
             end loop;
 
             for j in 1 .. n loop
-               MLP.Add (m, Element (j));
+               for jj in Dim_Type loop
+                  m (jj) := m (jj) + Element (j) (jj);
+               end loop;
             end loop;
 
-            MLP.Divide (m, Real (n));
+            for j in Dim_Type loop
+               m (j) := m (j) / Real (n);
+            end loop;
             o.BSS := 0.0;
 
             for j in o.Centroids'Range loop
-               o.BSS := o.BSS +
-               MLP.Squared_Euclidean_Distance (o.Centroids (j).all, m) *
-               Real (o.Clusters (j).Length);
+               o.BSS := o.BSS + 
+                  SED (o.Centroids (j), m) * Real (o.Clusters (j).Length);
             end loop;
          end WSS_BSS;
       end;
@@ -214,7 +213,7 @@ package body ML.Clustering.Kmeans is
       Put_Line ("Cluster means:");
       for j in 1 .. o.k loop
          Put ("[" & j'Img & "]" & ASCII.HT);
-         for e of o.Centroids (j).all loop
+         for e of o.Centroids (j) loop
             Put (e'Img);
          end loop;
          New_Line;

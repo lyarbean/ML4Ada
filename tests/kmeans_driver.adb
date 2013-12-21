@@ -1,10 +1,15 @@
 with ML.Clustering.Kmeans;
+with Ada.Containers.Vectors;
 
 procedure kmeans_driver is
-   data : ML.Real_Array_Vector;
-   --  Functions to access data
+   type My_Dim is (x, y);
+   type My_Point is array (My_Dim) of ML.Real;
+   package My_Vector is new  Ada.Containers.Vectors (Positive, My_Point);
+
+   data : My_Vector.Vector;
+
    function Length return Integer;
-   function Element (x : ML.Index_Type) return ML.Real_Array;
+   function Element (x : Positive) return My_Point;
 
    function Length return Integer is
    begin
@@ -14,12 +19,14 @@ procedure kmeans_driver is
       return Integer (data.Length);
    end Length;
 
-   function Element (x : ML.Index_Type) return ML.Real_Array is
+   function Element (x : Positive) return My_Point is
    begin
       return data.Element (x);
    end Element;
 
-   package Kmeans is new ML.Clustering.Kmeans (Length, Element);
+   package Kmeans is new ML.Clustering.Kmeans
+      (My_Dim, My_Point, Length, Element);
+
    kmeans_obj : Kmeans.Object (3);
 begin
    data.Append ((1.15051216, 0.472122276));

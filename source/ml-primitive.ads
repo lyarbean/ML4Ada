@@ -50,10 +50,13 @@ package ML.Primitive is
    -----------------
    --  Distances  --
    -----------------
+   generic
+      type Index_Type is (<>);
+      type Element_Array is array (Index_Type) of Real;
    function Squared_Euclidean_Distance
-      (a, b : Real_Array) return Real with Inline;
+      (a, b : Element_Array) return Real with Inline;
 
-   function Euclidean_Distance (a, b : Real_Array) return Real with Inline;
+   --  function Euclidean_Distance (a, b : Real_Array) return Real with Inline;
 
    function Manhattan_Distance (a, b : Real_Array) return Real with Inline;
 
