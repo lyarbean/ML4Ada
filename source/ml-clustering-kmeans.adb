@@ -2,13 +2,21 @@ pragma License (GPL);
 with ML.Primitive;
 with Ada.Unchecked_Deallocation;
 with Ada.Numerics.Discrete_Random;
+with Ada.Containers.Ordered_Sets;
 with Ada.Text_IO;
 
 package body ML.Clustering.Kmeans is
    package MLP is new ML.Primitive (Dim_Type, Element_Type);
    function SED (a, b : Element_Type) return Real
       renames MLP.Squared_Euclidean_Distance;
+
    package ANDR is new Ada.Numerics.Discrete_Random (Positive);
+   package Index_Set is new Ada.Containers.Ordered_Sets (Positive);
+   type Element_Array is array (Positive range <>) of Element_Type;
+   type Real_Array    is array (Positive range <>) of Real;
+   type Index_Array   is array (Positive range <>) of Positive;
+   type Cluster_Array is array (Positive range <>) of Index_Set.Set;
+
    procedure Free is new Ada.Unchecked_Deallocation
       (Element_Array, Element_Array_Access);
    procedure Free is new Ada.Unchecked_Deallocation
