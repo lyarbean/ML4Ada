@@ -1,8 +1,9 @@
 with Ada.Finalization;
 generic
+   type Scalar_Type  is digits <>;
    type Feature_Type is (<>);
    type Class_Type   is (<>);
-   type Feature_Array is array (Feature_Type) of Real;
+   type Feature_Array is array (Feature_Type) of Scalar_Type;
    with function Length return Natural;
    with function Belong  (x : Positive) return Class_Type;
    with function Element (x : Positive) return Feature_Array;

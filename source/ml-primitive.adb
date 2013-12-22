@@ -17,7 +17,7 @@ package body ML.Primitive is
       end loop;
    end Sub;
 
-   procedure Multiply (a : in out Element_Type; b : Real) is
+   procedure Multiply (a : in out Element_Type; b : Scalar_Type) is
    begin
       for c of a loop
          pragma Loop_Optimize (Vector);
@@ -25,7 +25,7 @@ package body ML.Primitive is
       end loop;
    end Multiply;
 
-   procedure Divide (a : in out Element_Type; b : Real) is
+   procedure Divide (a : in out Element_Type; b : Scalar_Type) is
    begin
       for c of a loop
          pragma Loop_Optimize (Vector);
@@ -33,7 +33,7 @@ package body ML.Primitive is
       end loop;
    end Divide;
 
-   function "*" (a : Element_Type; b : Real) return Element_Type is
+   function "*" (a : Element_Type; b : Scalar_Type) return Element_Type is
    begin
       return r : Element_Type := a do
          for c of r loop
@@ -43,8 +43,8 @@ package body ML.Primitive is
       end return;
    end "*";
 
-   --   function Max (a : Element_Type; b : Index_Array) return Real is
-   --      m : Real := a (b (b'First));
+   --   function Max (a : Element_Type; b : Index_Array) return Scalar_Type is
+   --      m : Scalar_Type := a (b (b'First));
    --   begin
    --      for c of b loop
    --         if a (c) > m then
@@ -54,8 +54,8 @@ package body ML.Primitive is
    --      return m;
    --   end Max;
 
-   function Max (a : Element_Type) return Real is
-      m : Real := a (a'First);
+   function Max (a : Element_Type) return Scalar_Type is
+      m : Scalar_Type := a (a'First);
    begin
       for c of a loop
          if c > m then
@@ -65,8 +65,8 @@ package body ML.Primitive is
       return m;
    end Max;
 
-   --   function Min (a : Element_Type; b : Index_Array) return Real is
-   --      m : Real := a (b (b'First));
+   --   function Min (a : Element_Type; b : Index_Array) return Scalar_Type is
+   --      m : Scalar_Type := a (b (b'First));
    --   begin
    --      for c of b loop
    --         if a (c) < m then
@@ -76,8 +76,8 @@ package body ML.Primitive is
    --      return m;
    --   end Min;
 
-   function Min (a : Element_Type) return Real is
-      m : Real := a (a'First);
+   function Min (a : Element_Type) return Scalar_Type is
+      m : Scalar_Type := a (a'First);
    begin
       for c of a loop
          if c < m then
@@ -87,8 +87,8 @@ package body ML.Primitive is
       return m;
    end Min;
 
-   function Sum (a : Element_Type) return Real is
-      m : Real := 0.0;
+   function Sum (a : Element_Type) return Scalar_Type is
+      m : Scalar_Type := 0.0;
    begin
       for c of a loop
          m := m + c;
@@ -96,144 +96,146 @@ package body ML.Primitive is
       return m;
    end Sum;
 
-   --   function Mean (a : Element_Type; b : Index_Array) return Real is
-   --      m : Real := 0.0;
+   --   function Mean (a : Element_Type; b : Index_Array) return Scalar_Type is
+   --      m : Scalar_Type := 0.0;
    --   begin
    --      for c of b loop
    --         m := m + a (c);
    --      end loop;
-   --      m := m / Real (b'Length);
+   --      m := m / Scalar_Type (b'Length);
    --      return m;
    --   end Mean;
 
-   function Mean (a : Element_Type) return Real is
-      m : Real := 0.0;
+   function Mean (a : Element_Type) return Scalar_Type is
+      m : Scalar_Type := 0.0;
    begin
       for c of a loop
          m := m + c;
       end loop;
-      m := m / Real (a'Length);
+      m := m / Scalar_Type (a'Length);
       return m;
    end Mean;
 
    --  E(x^2) - E(x)^2
    --   function Variance
    --      (a : Element_Type; b : Index_Array; Bessel : Boolean := True)
-   --      return Real is
-   --      v, m : Real := 0.0;
+   --      return Scalar_Type is
+   --      v, m : Scalar_Type := 0.0;
    --   begin
    --      for c of b loop
    --         m := m + a (c);
    --         v := v + a (c) * a (c);
    --      end loop;
-   --      m := m / Real (b'Length);
-   --      v := v / Real (b'Length) - m * m;
+   --      m := m / Scalar_Type (b'Length);
+   --      v := v / Scalar_Type (b'Length) - m * m;
    --      if Bessel then
-   --         v := v * Real (b'Length) / Real (b'Length - 1);
+   --         v := v * Scalar_Type (b'Length) / Scalar_Type (b'Length - 1);
    --      end if;
    --      return v;
    --   end Variance;
 
    function Variance (a : Element_Type; Bessel : Boolean := True)
-      return Real is
-      v, m : Real := 0.0;
+      return Scalar_Type is
+      v, m : Scalar_Type := 0.0;
    begin
       for c of a loop
          m := m + c;
          v := v + c * c;
       end loop;
-      m := m / Real (a'Length);
-      v := v / Real (a'Length) - m * m;
+      m := m / Scalar_Type (a'Length);
+      v := v / Scalar_Type (a'Length) - m * m;
       if Bessel then
-         v := v * Real (a'Length) / Real (a'Length - 1);
+         v := v * Scalar_Type (a'Length) / Scalar_Type (a'Length - 1);
       end if;
       return v;
    end Variance;
 
    --   function Standard_Deviation (a : Element_Type; b : Index_Array)
-   --      return Real is
+   --      return Scalar_Type is
    --   begin
    --      return Sqrt (Variance (a, b));
    --   end Standard_Deviation;
 
-   function Standard_Deviation (a : Element_Type) return Real is
+   function Standard_Deviation (a : Element_Type) return Scalar_Type is
    begin
       return Sqrt (Variance (a));
    end Standard_Deviation;
 
    --   function Central_Moment
    --      (a : Element_Type; b : Index_Array; n : Positive)
-   --      return Real is
-   --      m : Real := Mean (a, b);
-   --      v : Real := 0.0;
+   --      return Scalar_Type is
+   --      m : Scalar_Type := Mean (a, b);
+   --      v : Scalar_Type := 0.0;
    --   begin
    --      for c of b loop
    --         v := v + (a (c) - m) ** n;
    --      end loop;
-   --      return v / Real (b'Length);
+   --      return v / Scalar_Type (b'Length);
    --   end Central_Moment;
 
-   function Central_Moment (a : Element_Type; n : Positive) return Real is
-      m : Real := Mean (a);
-      v : Real := 0.0;
+   function Central_Moment (a : Element_Type; n : Positive)
+      return Scalar_Type is
+      m : Scalar_Type := Mean (a);
+      v : Scalar_Type := 0.0;
    begin
       for c of a loop
          v := v + (c - m) ** n;
       end loop;
-      return v / Real (a'Length);
+      return v / Scalar_Type (a'Length);
    end Central_Moment;
 
    --   function Normalized_Moment
    --      (a : Element_Type; b : Index_Array; n : Positive)
-   --      return Real is
-   --      m  : Real := 0.0;
-   --      v2 : Real := 0.0;
-   --      vn : Real := 0.0;
+   --      return Scalar_Type is
+   --      m  : Scalar_Type := 0.0;
+   --      v2 : Scalar_Type := 0.0;
+   --      vn : Scalar_Type := 0.0;
    --   begin
    --      for c of b loop
    --         m  := m + a (c);
    --      end loop;
-   --      m := m / Real (b'Length);
+   --      m := m / Scalar_Type (b'Length);
    --      for c of b loop
    --         v2 := v2 + (a (c) - m) * (a (c) - m);
    --         vn := vn + (a (c) - m) ** n;
    --      end loop;
-   --      v2 := v2 / Real (b'Length);
+   --      v2 := v2 / Scalar_Type (b'Length);
    --      v2 := Sqrt (v2) ** n;
-   --      vn := vn / Real (b'Length);
+   --      vn := vn / Scalar_Type (b'Length);
    --      return vn / v2;
    --   end Normalized_Moment;
 
-   function Normalized_Moment (a : Element_Type; n : Positive) return Real is
-      m  : Real := 0.0;
-      v2 : Real := 0.0;
-      vn : Real := 0.0;
+   function Normalized_Moment (a : Element_Type; n : Positive)
+      return Scalar_Type is
+      m  : Scalar_Type := 0.0;
+      v2 : Scalar_Type := 0.0;
+      vn : Scalar_Type := 0.0;
    begin
       for c of a loop
          m := m + c;
       end loop;
-      m := m / Real (a'Length);
+      m := m / Scalar_Type (a'Length);
 
       for c of a loop
          v2 := v2 + (c - m) * (c - m);
          vn := vn + (c - m) ** n;
       end loop;
 
-      v2 := v2 / Real (a'Length);
+      v2 := v2 / Scalar_Type (a'Length);
       v2 := Sqrt (v2) ** n;
-      vn := vn / Real (a'Length);
+      vn := vn / Scalar_Type (a'Length);
       return vn / v2;
    end Normalized_Moment;
    --------------------
    --  Distribution  --
    --------------------
-   function Normal (x, m, s : Real) return Real is
+   function Normal (x, m, s : Scalar_Type) return Scalar_Type is
    begin
       return Exp (-((x - m) / s) ** 2 / 2.0) /
       (Sqrt (2.0 * Ada.Numerics.Pi) * s);
    end Normal;
 
-   function Log_Normal (x, m, s : Real) return Real is
+   function Log_Normal (x, m, s : Scalar_Type) return Scalar_Type is
    begin
       if x <= 0.0 then
          return 0.0;
@@ -246,8 +248,9 @@ package body ML.Primitive is
    -- Distances --
    ---------------
 
-   function Squared_Euclidean_Distance (a, b : Element_Type) return Real is
-      m : Real := 0.0;
+   function Squared_Euclidean_Distance (a, b : Element_Type)
+      return Scalar_Type is
+      m : Scalar_Type := 0.0;
    begin
       for j in Index_Type loop
          pragma Loop_Optimize (Vector);
@@ -256,13 +259,13 @@ package body ML.Primitive is
       return m;
    end Squared_Euclidean_Distance;
 
-   --  function Euclidean_Distance (a, b : Element_Type) return Real is
+   --  function Euclidean_Distance (a, b : Element_Type) return Scalar_Type is
    --  begin
    --    return Sqrt (Squared_Euclidean_Distance (a, b));
    --  end Euclidean_Distance;
 
-   function Manhattan_Distance (a, b : Element_Type) return Real is
-      m : Real := 0.0;
+   function Manhattan_Distance (a, b : Element_Type) return Scalar_Type is
+      m : Scalar_Type := 0.0;
    begin
       for j in Index_Type loop
          pragma Loop_Optimize (Vector);
@@ -271,9 +274,9 @@ package body ML.Primitive is
       return m;
    end Manhattan_Distance;
 
-   function Sup_Distance (a, b : Element_Type) return Real is
-      m : Real := 0.0;
-      d : Real;
+   function Sup_Distance (a, b : Element_Type) return Scalar_Type is
+      m : Scalar_Type := 0.0;
+      d : Scalar_Type;
    begin
       for j in Index_Type loop
          d := abs (a (j) - b (j));
@@ -284,8 +287,8 @@ package body ML.Primitive is
       return m;
    end Sup_Distance;
 
-   function Cosine_Distance (a, b : Element_Type) return Real is
-      m, na, nb : Real := 0.0;
+   function Cosine_Distance (a, b : Element_Type) return Scalar_Type is
+      m, na, nb : Scalar_Type := 0.0;
    begin
       for j in Index_Type loop
          pragma Loop_Optimize (Vector);

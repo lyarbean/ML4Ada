@@ -2,11 +2,12 @@ with ML.Classification.Naivebayes;
 with Ada.Containers.Vectors;
 with Ada.Text_IO;
 procedure naivebayes_driver is
-   package AF is new  Ada.Text_IO.Float_IO (ML.Real);
+   type Real is new Long_Float;  --  Long_Long_Float;
+   package AF is new  Ada.Text_IO.Float_IO (Real);
    package TIO renames Ada.Text_IO;
    type My_Feature is (Sepal_Length, Sepal_Width, Petal_Length, Petal_Width);
    type My_Class is (Setosa, Versicolor, Virginica);
-   type My_Array is array (My_Feature) of ML.Real;
+   type My_Array is array (My_Feature) of Real;
    package My_Array_Vector_Package is new
    Ada.Containers.Vectors (Positive, My_Array);
    use My_Array_Vector_Package;
@@ -31,7 +32,6 @@ procedure naivebayes_driver is
    end Element;
 
    function Belong (x : Positive) return My_Class is
-      use ML;
    begin
       if x <= 50 then
          return Setosa;
@@ -43,12 +43,12 @@ procedure naivebayes_driver is
    end Belong;
 
    package NB is new ML.Classification.Naivebayes
-      (My_Feature, My_Class, My_Array, Length, Belong, Element);
+      (Real, My_Feature, My_Class, My_Array, Length, Belong, Element);
 
    NB_Obj : NB.Object;
    file : TIO.File_Type;
    f : My_Array;
-   x : ML.Real;
+   x : Real;
 begin
    TIO.Open
       (File => file, Mode => TIO.In_File, Name => "iris.t");

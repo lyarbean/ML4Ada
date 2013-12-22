@@ -5,19 +5,19 @@ with Ada.Numerics.Discrete_Random;
 with Ada.Text_IO;
 
 package body ML.Clustering.Kmeans is
-   package MLP is new ML.Primitive (Dim_Type, Element_Type);
-   function SED (a, b : Element_Type) return Real
+   package MLP is new ML.Primitive (Scalar_Type, Dim_Type, Element_Type);
+   function SED (a, b : Element_Type) return Scalar_Type
       renames MLP.Squared_Euclidean_Distance;
 
    package ANDR is new Ada.Numerics.Discrete_Random (Positive);
    type Element_Array is array (Positive range <>) of Element_Type;
-   type Real_Array    is array (Positive range <>) of Real;
+   type Scalar_Array    is array (Positive range <>) of Scalar_Type;
    type Index_Array   is array (Positive range <>) of Positive;
 
    procedure Free is new Ada.Unchecked_Deallocation
       (Element_Array, Element_Array_Access);
    procedure Free is new Ada.Unchecked_Deallocation
-      (Real_Array, Real_Array_Access);
+      (Scalar_Array, Scalar_Array_Access);
    procedure Free is new Ada.Unchecked_Deallocation
       (Index_Array, Index_Array_Access);
 
@@ -27,7 +27,7 @@ package body ML.Clustering.Kmeans is
    procedure Initialize (o : in out Object) is
    begin
       o.Centroids := new Element_Array (1 .. o.k);
-      o.WSS       := new Real_Array (1 .. o.k);
+      o.WSS       := new Scalar_Array (1 .. o.k);
       o.Sizes     := new Index_Array (1 .. o.k);
 
       o.Centroids.all := (others => (others => 0.0));
@@ -79,8 +79,8 @@ package body ML.Clustering.Kmeans is
 
       declare
          updated : Boolean;
-         dist    : Real;
-         tmp     : Real;
+         dist    : Scalar_Type;
+         tmp     : Scalar_Type;
          idx     : Positive;
          g       : ANDR.Generator;
          mean    : Element_Type := (others => 0.0);
@@ -102,7 +102,7 @@ package body ML.Clustering.Kmeans is
             end loop;
 
             --  Compute sample mean
-            MLP.Divide (mean, Real (n));
+            MLP.Divide (mean, Scalar_Type (n));
             ANDR.Reset (g);
 
             for j in 1 .. o.k loop
@@ -130,7 +130,7 @@ package body ML.Clustering.Kmeans is
             Each_Item :
             for jn in 1 .. n loop
                --  Find a nearest cluster for jn
-               dist := Real'Last;
+               dist := Scalar_Type'Last;
 
                for jk in o.Centroids'Range loop
                   --  TODO Optimize this
@@ -162,7 +162,7 @@ package body ML.Clustering.Kmeans is
             end loop;
 
             for j in o.Centroids'Range loop
-               MLP.Divide (o.Centroids (j), Real (o.Sizes (j)));
+               MLP.Divide (o.Centroids (j), Scalar_Type (o.Sizes (j)));
             end loop;
 
             o.Iter := jm;
@@ -181,7 +181,7 @@ package body ML.Clustering.Kmeans is
 
             for j in o.Centroids'Range loop
                o.BSS := o.BSS +
-               SED (o.Centroids (j), mean) * Real (o.Sizes (j));
+               SED (o.Centroids (j), mean) * Scalar_Type (o.Sizes (j));
             end loop;
          end WSS_BSS;
       end;
@@ -228,7 +228,7 @@ package body ML.Clustering.Kmeans is
 
       New_Line;
       declare
-         s : Real := 0.0;
+         s : Scalar_Type := 0.0;
       begin
          for c of o.WSS.all loop
             s := s + c;

@@ -3,7 +3,7 @@ with Ada.Containers.Vectors;
 
 procedure kmeans_driver is
    type My_Dim is (x, y);
-   type My_Point is array (My_Dim) of ML.Real;
+   type My_Point is array (My_Dim) of Long_Float;
    package My_Vector is new  Ada.Containers.Vectors (Positive, My_Point);
 
    data : My_Vector.Vector;
@@ -25,7 +25,7 @@ procedure kmeans_driver is
    end Element;
 
    package Kmeans is new ML.Clustering.Kmeans
-      (My_Dim, My_Point, Length, Element);
+      (Long_Float, My_Dim, My_Point, Length, Element);
 
    kmeans_obj : Kmeans.Object (3);
 begin
