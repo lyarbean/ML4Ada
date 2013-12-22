@@ -47,6 +47,8 @@ begin
 exception
    when TIO.End_Error => null; --  In case of blank lines
    TIO.Close (file);
-   Kmeans.Run (kmeans_obj, 1000);
+   for j in 1 .. 1e3 loop
+      Kmeans.Run (kmeans_obj, 1000);
+   end loop;
    Kmeans.Put (kmeans_obj);
 end kmeans_driver3;

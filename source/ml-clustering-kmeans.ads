@@ -12,22 +12,20 @@ package ML.Clustering.Kmeans is
    with private;
    procedure Run (o : in out Object; m : Positive := 10);
    procedure Put (o : Object);
-   Small_K,  Huge_K, Zero_N : exception;
+   Small_K, Huge_K, Zero_N : exception;
 
 private
    type Element_Array;
    type Real_Array;
    type Index_Array;
-   type Cluster_Array;
    type Element_Array_Access is access Element_Array;
    type Real_Array_Access    is access Real_Array;
    type Index_Array_Access   is access Index_Array;
-   type Cluster_Array_Access is access Cluster_Array;
    type Object (k : Positive) is new Ada.Finalization.Limited_Controlled with
       record
-         Clusters  : Cluster_Array_Access;
          Centroids : Element_Array_Access;
          WSS       : Real_Array_Access;
+         Sizes     : Index_Array_Access;
          Withins   : Index_Array_Access;
          BSS       : Real;
          Iter      : Integer;

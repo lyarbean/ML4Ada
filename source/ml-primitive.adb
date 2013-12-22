@@ -3,7 +3,7 @@ package body ML.Primitive is
    use GEF;
    procedure Add (a : in out Element_Type;  b : Element_Type) is
    begin
-      for j in a'Range loop
+      for j in Index_Type loop
          pragma Loop_Optimize (Vector);
          a (j) := a (j) + b (j);
       end loop;
@@ -11,7 +11,7 @@ package body ML.Primitive is
 
    procedure Sub (a : in out Element_Type;  b : Element_Type) is
    begin
-      for j in a'Range loop
+      for j in Index_Type loop
          pragma Loop_Optimize (Vector);
          a (j) := a (j) - b (j);
       end loop;

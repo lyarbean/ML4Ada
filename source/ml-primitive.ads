@@ -8,11 +8,11 @@ package ML.Primitive is
    --  Math functions for Real
    package GEF is new Ada.Numerics.Generic_Elementary_Functions (Real);
 
-   procedure Add (a : in out Element_Type; b : Element_Type);
-   procedure Sub (a : in out Element_Type; b : Element_Type);
+   procedure Add (a : in out Element_Type; b : Element_Type) with Inline;
+   procedure Sub (a : in out Element_Type; b : Element_Type) with Inline;
    procedure Multiply (a : in out Element_Type; b : Real);
-   procedure Divide (a : in out Element_Type; b : Real);
-   function "*" (a : Element_Type; b : Real) return Element_Type;
+   procedure Divide (a : in out Element_Type; b : Real) with Inline;
+   function "*" (a : Element_Type; b : Real) return Element_Type with Inline;
 
    function Max (a : Element_Type) return Real with Inline;
    function Min (a : Element_Type) return Real with Inline;
