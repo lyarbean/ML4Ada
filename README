@@ -1,9 +1,9 @@
-Machine Learning for Ada
+# Machine Learning for Ada
 
-#Compiler
+## Compiler
 You could download the latest Gnat from libre.adacore.com.
 
-#Tests
+## Tests
 To compile demo programs:
     cd tests
     gprbuild -P primitive_drivers
