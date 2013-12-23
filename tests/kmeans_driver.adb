@@ -84,7 +84,4 @@ begin
    Kmeans.Run (kmeans_obj, 12);
    Kmeans.Run (kmeans_obj, 12);
    Kmeans.Put (kmeans_obj);
-   data.Append ((6.33214128, 1.328192015));
-   Kmeans.Run (kmeans_obj, 12);
-   Kmeans.Put (kmeans_obj);
 end kmeans_driver;

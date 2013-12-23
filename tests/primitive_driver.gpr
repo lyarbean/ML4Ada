@@ -4,10 +4,20 @@ for Object_Dir use "./obj";
 for Library_Dir use "./lib";
 for Exec_Dir use "./bin";
 for Main use ("primitive_driver");
+package Builder is
+   for Default_Switches ("Ada") use ("-g", "-O2", "-gnat2012", "-j4");
+end Builder;
 package Compiler is
    for Default_Switches ("Ada")
-   use ("-gnaty", "-pipe", "-v" , "-O3",
-        "-gnat2012", "-march=native", "-mtune=native");
+   use ("-gnaty", "-gnatyg", "-pipe", "-v" ,
+    "-gnatp", "-gnatn", "-fdata-sections", "-ffunction-sections",
+    --  "-ffast-math", "-fassociative-math", "-funsafe-math-optimizations",
+    "-march=native", "-mtune=native");
 end Compiler;
-
+package Binder is
+   for Default_Switches ("Ada") use ("-E");
+end Binder;
+package Linker is
+   for Default_Switches ("Ada") use ("-Wl,--gc-sections");
+end Linker;
 end primitive_Driver;

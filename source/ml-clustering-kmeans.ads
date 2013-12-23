@@ -27,7 +27,7 @@ private
          Centroids : Element_Array_Access;
          WSS       : Scalar_Array_Access;
          Sizes     : Index_Array_Access;
-         Withins   : Index_Array_Access;
+         Clusters  : Index_Array_Access;
          BSS       : Scalar_Type;
          Iter      : Integer;
       end record;
