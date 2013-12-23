@@ -229,23 +229,6 @@ package body ML.Primitive.Vector is
       vn := vn / Scalar_Type (a'Length);
       return vn / v2;
    end Normalized_Moment;
-   --------------------
-   --  Distribution  --
-   --------------------
-   function Normal (x, m, s : Scalar_Type) return Scalar_Type is
-   begin
-      return Exp (-((x - m) / s) ** 2 / 2.0) /
-      (Sqrt (2.0 * Ada.Numerics.Pi) * s);
-   end Normal;
-
-   function Log_Normal (x, m, s : Scalar_Type) return Scalar_Type is
-   begin
-      if x <= 0.0 then
-         return 0.0;
-      end if;
-      return Exp (-((Log (x) - m) / s) ** 2 / 2.0) /
-      (Sqrt (2.0 * Ada.Numerics.Pi) * s * x);
-   end Log_Normal;
 
    ---------------
    -- Distances --
