@@ -7,9 +7,9 @@ You could download the latest Gnat from libre.adacore.com.
 To compile demo programs:
 
         cd tests
-        gprbuild -P primitive_drivers
-        gprbuild -P kmeans_drivers
-        gprbuild -P naivebayes_drivers
+        gprbuild -P primitive_driver
+        gprbuild -P kmeans_driver
+        gprbuild -P naivebayes_driver
 
 Then you can find Executables in ./bin/.
 
