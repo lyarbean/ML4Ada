@@ -1,12 +1,15 @@
 with ML.Primitive;
+with ML.Primitive.Vector;
 with Ada.Text_IO;
 use Ada.Text_IO;
 
 procedure primitive_driver is
    subtype Index is Positive range 1 .. 10;
    type Real_Array is array (Index) of Long_Float;
-   package MLP is new ML.Primitive (Long_Float, Index, Real_Array);
+   package MLP is new ML.Primitive (Long_Float);
+   package MLPV is new MLP.Vector (Index, Real_Array);
    use MLP;
+   use MLPV;
    s1 : Real_Array := (2.4, 2.5, 7.6, 1.3, 2.5, 7.6, 3.4, 5.6, 0.2, 0.7);
    s2 : Real_Array := (2.7, 1.5, 9.6, -0.3, 6.5, 8.2, 6.1, -8.6, 9.2, -10.7);
 begin

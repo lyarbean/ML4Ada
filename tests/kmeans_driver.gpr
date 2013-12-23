@@ -7,6 +7,8 @@ for Main use ("kmeans_driver", "kmeans_driver2", "kmeans_driver3");
 package Compiler is
    for Default_Switches ("Ada")
    use ("-gnaty", "-gnatyg", "-pipe", "-v" , "-O3",
+        --  To allow vectorize, uncomment next line, and gain 10% speed up
+        --  "-ffast-math", "-fassociative-math", "-funsafe-math-optimizations",
         "-gnat2012", "-march=native", "-mtune=native");
 end Compiler;
 end Kmeans_Driver;

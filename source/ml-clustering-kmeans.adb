@@ -1,11 +1,13 @@
 pragma License (GPL);
 with ML.Primitive;
+with ML.Primitive.Vector;
 with Ada.Unchecked_Deallocation;
 with Ada.Numerics.Discrete_Random;
 with Ada.Text_IO;
 
 package body ML.Clustering.Kmeans is
-   package MLP is new ML.Primitive (Scalar_Type, Dim_Type, Element_Type);
+   package P is new ML.Primitive (Scalar_Type);
+   package MLP is new P.Vector (Dim_Type, Element_Type);
    function SED (a, b : Element_Type) return Scalar_Type
       renames MLP.Squared_Euclidean_Distance;
 

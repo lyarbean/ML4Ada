@@ -1,9 +1,11 @@
 with ML.Primitive;
+with ML.Primitive.Vector;
 with Ada.Unchecked_Deallocation;
 with Ada.Text_IO;
 use Ada.Text_IO;
 package body ML.Classification.Naivebayes is
-   package MLP is new ML.Primitive (Scalar_Type, Feature_Type, Feature_Array);
+   package MLP is new ML.Primitive (Scalar_Type);
+   package MLPV is new MLP.Vector (Feature_Type, Feature_Array);
    package Scalar_IO is new Ada.Text_IO.Float_IO (Scalar_Type);
    use Scalar_IO;
    type Matrix_Type is array (Class_Type, Feature_Type) of Scalar_Type;
