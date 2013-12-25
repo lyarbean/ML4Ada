@@ -152,24 +152,30 @@ package body ML.Classification.Naivebayes is
          p  : Prediction := (others => 1.0);
          ps : Scalar_Type       := 0.0;
       begin
-         for c in Class_Type loop
-            case d is
-               when Normal =>
+         case d is
+            when Normal =>
+               for c in Class_Type loop
                   for f in Feature_Type loop
                      p (c) := p (c) *
                      MLP.Normal (x (f), o.Means (c, f), o.SDs (c, f));
                   end loop;
-               when Log_Normal =>
+                  p (c) := p (c) * Scalar_Type (o.Priori (c)) /
+                     Scalar_Type (Length);
+                  ps := ps + p (c);
+               end loop;
+            when Log_Normal =>
+               for c in Class_Type loop
                   for f in Feature_Type loop
                      p (c) := p (c) *
                      MLP.Log_Normal (x (f), o.Means (c, f), o.SDs (c, f));
                   end loop;
-               when others =>
-                  raise Not_Implemented_Distribution;
-            end case;
-            p (c) := p (c) * Scalar_Type (o.Priori (c)) / Scalar_Type (Length);
-            ps := ps + p (c);
-         end loop;
+                  p (c) := p (c) * Scalar_Type (o.Priori (c)) /
+                     Scalar_Type (Length);
+                  ps := ps + p (c);
+               end loop;
+            when others =>
+               raise Not_Implemented_Distribution;
+         end case;
 
          for c in Class_Type loop
             p (c) := p (c) / ps;
@@ -199,24 +205,30 @@ package body ML.Classification.Naivebayes is
          ps : Scalar_Type       := 0.0;
          r  : Class_Type;
       begin
-         for c in Class_Type loop
-            case d is
-               when Normal =>
+         case d is
+            when Normal =>
+               for c in Class_Type loop
                   for f in Feature_Type loop
                      p (c) := p (c) *
                      MLP.Normal (x (f), o.Means (c, f), o.SDs (c, f));
                   end loop;
-               when Log_Normal =>
+                  p (c) := p (c) * Scalar_Type (o.Priori (c)) /
+                     Scalar_Type (Length);
+                  ps := ps + p (c);
+               end loop;
+            when Log_Normal =>
+               for c in Class_Type loop
                   for f in Feature_Type loop
                      p (c) := p (c) *
                      MLP.Log_Normal (x (f), o.Means (c, f), o.SDs (c, f));
                   end loop;
-               when others =>
-                  raise Not_Implemented_Distribution;
-            end case;
-            p (c) := p (c) * Scalar_Type (o.Priori (c)) / Scalar_Type (Length);
-            ps := ps + p (c);
-         end loop;
+                  p (c) := p (c) * Scalar_Type (o.Priori (c)) /
+                     Scalar_Type (Length);
+                  ps := ps + p (c);
+               end loop;
+            when others =>
+               raise Not_Implemented_Distribution;
+         end case;
 
          for c in Class_Type loop
             p (c) := p (c) / ps;
