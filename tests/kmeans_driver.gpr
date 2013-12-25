@@ -18,6 +18,6 @@ package Binder is
    for Default_Switches ("Ada") use ("-E");
 end Binder;
 package Linker is
-   for Default_Switches ("Ada") use ("-Wl,--gc-sections");
+   for Default_Switches ("Ada") use ("-s", "-Wl,--gc-sections");
 end Linker;
 end Kmeans_Driver;

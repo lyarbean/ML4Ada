@@ -19,15 +19,17 @@ private
    type Element_Array;
    type Scalar_Array;
    type Index_Array;
+   type Cluster_Type;
    type Element_Array_Access is access Element_Array;
    type Scalar_Array_Access  is access Scalar_Array;
    type Index_Array_Access   is access Index_Array;
+   type Cluster_Access is access Cluster_Type;
    type Object (k : Positive) is new Ada.Finalization.Limited_Controlled with
       record
          Centroids : Element_Array_Access;
          WSS       : Scalar_Array_Access;
          Sizes     : Index_Array_Access;
-         Clusters  : Index_Array_Access;
+         Clusters  : Cluster_Access;
          BSS       : Scalar_Type;
          Iter      : Integer;
       end record;

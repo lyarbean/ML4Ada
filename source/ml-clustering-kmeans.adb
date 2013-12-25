@@ -14,7 +14,19 @@ package body ML.Clustering.Kmeans is
    package ANDR is new Ada.Numerics.Discrete_Random (Positive);
    type Element_Array is array (Positive range <>) of Element_Type;
    type Scalar_Array  is array (Positive range <>) of Scalar_Type;
-   type Index_Array   is array (Positive range <>) of Positive;
+   type Index_Array   is array (Positive range <>) of Integer;
+   type Short_Array   is array (Positive range <>) of Short_Integer;
+   type Short_Array_Access is access Short_Array;
+   type Byte is mod 2 ** 8;
+   for Byte'Size use 8;
+   type Byte_Array is array (Positive range <>) of Byte;
+   type Byte_Access is access Byte_Array;
+
+   type Cluster_Type is record
+      x : Byte_Access        := null;
+      y : Index_Array_Access := null;
+      z : Short_Array_Access := null;
+   end record;
 
    procedure Free is new Ada.Unchecked_Deallocation
       (Element_Array, Element_Array_Access);
@@ -22,10 +34,19 @@ package body ML.Clustering.Kmeans is
       (Scalar_Array, Scalar_Array_Access);
    procedure Free is new Ada.Unchecked_Deallocation
       (Index_Array, Index_Array_Access);
+   procedure Free is new Ada.Unchecked_Deallocation
+      (Byte_Array, Byte_Access);
+   procedure Free is new Ada.Unchecked_Deallocation
+      (Short_Array, Short_Array_Access);
+   procedure Free is new Ada.Unchecked_Deallocation
+      (Cluster_Type, Cluster_Access);
 
-   ----------------------------------------------------------------------------
    procedure Reset (o : in out Object) with Inline;
-   ----------------------------------------------------------------------------
+   function Get_Cluster (o : Object; j : Positive; t : Integer)
+      return Positive with Inline;
+   procedure Set_Cluster (o : in out Object; j : Positive;
+      c : Positive; t : Integer) with Inline;
+
    procedure Initialize (o : in out Object) is
    begin
       o.Centroids := new Element_Array (1 .. o.k);
@@ -34,7 +55,7 @@ package body ML.Clustering.Kmeans is
 
       o.Centroids.all := (others => (others => 0.0));
       o.WSS.all       := (others => 0.0);
-      o.Sizes.all     := (others => Positive'Last);
+      o.Sizes.all     := (others => Integer'Last);
       o.Clusters      := null;
       o.BSS           := 0.0;
       o.Iter          := 0;
@@ -46,6 +67,13 @@ package body ML.Clustering.Kmeans is
       Free (o.Sizes);
       Free (o.Centroids);
       if o.Clusters /= null then
+         if o.Clusters.x /= null then
+            Free (o.Clusters.x);
+         elsif o.Clusters.y /= null then
+            Free (o.Clusters.y);
+         elsif o.Clusters.z /= null then
+            Free (o.Clusters.z);
+         end if;
          Free (o.Clusters);
       end if;
    end Finalize;
@@ -53,6 +81,13 @@ package body ML.Clustering.Kmeans is
    procedure Reset (o : in out Object) is
    begin
       if o.Clusters /= null then
+         if o.Clusters.x /= null then
+            Free (o.Clusters.x);
+         elsif o.Clusters.y /= null then
+            Free (o.Clusters.y);
+         elsif o.Clusters.z /= null then
+            Free (o.Clusters.z);
+         end if;
          Free (o.Clusters);
       end if;
 
@@ -61,6 +96,26 @@ package body ML.Clustering.Kmeans is
       o.BSS           := 0.0;
       o.Iter          := 0;
    end Reset;
+
+   function Get_Cluster (o : Object; j : Positive; t : Integer)
+      return Positive is
+   begin
+      case t is
+         when 1 => return Positive (o.Clusters.x (j));
+         when 2 => return Positive (o.Clusters.y (j));
+         when others => return Positive (o.Clusters.z (j));
+      end case;
+   end Get_Cluster;
+
+   procedure Set_Cluster (o : in out Object; j : Positive;
+                          c : Positive; t : Integer) is
+   begin
+      case t is
+         when 1 => o.Clusters.x (j) := Byte (c);
+         when 2 => o.Clusters.y (j) := Positive (c);
+         when others => o.Clusters.z (j) := Short_Integer (c);
+      end case;
+   end Set_Cluster;
 
    procedure Run (o : in out Object; m : Positive := 10) is
       n : Positive;
@@ -86,14 +141,26 @@ package body ML.Clustering.Kmeans is
          idx     : Positive := Positive'Last;
          g       : ANDR.Generator;
          mean    : Element_Type := (others => 0.0);
+         t       : Integer;
       begin
          --  Reinitialize if we run again
          if o.Clusters /= null then
             Reset (o);
          end if;
 
-         o.Clusters := new Index_Array (1 .. n);
-         o.Clusters.all := (others => Positive'Last);
+         o.Clusters := new Cluster_Type;
+         case t is
+            when 1      => o.Clusters.x := new Byte_Array (1 .. n);
+            o.Clusters.x.all := (others => 0);
+            when 2      => o.Clusters.y := new Index_Array (1 .. n);
+            o.Clusters.y.all := (others => 0);
+            when others => o.Clusters.z := new Short_Array (1 .. n);
+            o.Clusters.z.all := (others => 0);
+         end case;
+
+         t := (if o.k < 256 then 1 else 0) +
+            (if o.k >= Positive (Short_Integer'Last) then 2 else 0);
+
          Initialize_Centroids :
          declare
             c    : Positive; --  centroid index
@@ -112,7 +179,7 @@ package body ML.Clustering.Kmeans is
                   done := True;
                   c := (ANDR.Random (g) mod n) + 1;
                   for jj in 1 .. j loop
-                     if o.Clusters (c) = jj then
+                     if Get_Cluster (o, c, t) = jj then
                         done := False;
                      end if;
                   end loop;
@@ -120,7 +187,7 @@ package body ML.Clustering.Kmeans is
                end loop;
 
                o.Centroids (j) := Element (c);
-               o.Clusters (c)  := j;
+               Set_Cluster (o, c, j, t);
                o.Sizes (j)     := 1;
             end loop;
          end Initialize_Centroids;
@@ -143,12 +210,13 @@ package body ML.Clustering.Kmeans is
                end loop;
 
                --  Migrate
-               if o.Clusters (jn) /= idx then
-                  if o.Clusters (jn) /= Positive'Last then
-                     o.Sizes (o.Clusters (jn)) := o.Sizes (o.Clusters (jn)) - 1;
+               if Get_Cluster (o, jn, t) /= idx then
+                  if Get_Cluster (o, jn, t) /= 0 then
+                     o.Sizes (Get_Cluster (o, jn, t)) :=
+                        o.Sizes (Get_Cluster (o, jn, t)) - 1;
                   end if;
                   o.Sizes (idx)   := o.Sizes (idx) + 1;
-                  o.Clusters (jn) := idx;
+                  Set_Cluster (o, jn, idx, t);
                   updated         := True;
                end if;
             end loop Each_Item;
@@ -158,7 +226,7 @@ package body ML.Clustering.Kmeans is
             --  update centroids
             o.Centroids.all := (others => (others => 0.0));
             for j in 1 .. n loop
-               MLP.Add (o.Centroids (o.Clusters (j)), Element (j));
+               MLP.Add (o.Centroids (Get_Cluster (o, j, t)), Element (j));
             end loop;
 
             for j in o.Centroids'Range loop
@@ -173,7 +241,7 @@ package body ML.Clustering.Kmeans is
             w : Positive;
          begin
             for j in 1 .. n loop
-               w := o.Clusters (j);
+               w := Get_Cluster (o, j, t);
                o.WSS (w) := o.WSS (w) + SED (o.Centroids (w), Element (j));
             end loop;
 
@@ -181,7 +249,7 @@ package body ML.Clustering.Kmeans is
 
             for j in o.Centroids'Range loop
                o.BSS := o.BSS +
-                  SED (o.Centroids (j), mean) * Scalar_Type (o.Sizes (j));
+               SED (o.Centroids (j), mean) * Scalar_Type (o.Sizes (j));
             end loop;
          end WSS_BSS;
       end;
@@ -189,6 +257,8 @@ package body ML.Clustering.Kmeans is
 
    procedure Put (o : Object) is
       use Ada.Text_IO;
+      t       : Integer := (if o.k < 256 then 1 else 0) +
+      (if o.k >= Positive (Short_Integer'Last) then 2 else 0);
    begin
       if o.Clusters = null then
          return;
@@ -196,9 +266,6 @@ package body ML.Clustering.Kmeans is
 
       Put ("K-means clustering with " & o.k'Img & " Clusters of sizes ");
 
-      --  for c of o.Clusters.all loop
-      --     Put (c.Length'Img);
-      ---   end loop;
       for c of o.Sizes.all loop
          Put (c'Img);
       end loop;
@@ -215,8 +282,8 @@ package body ML.Clustering.Kmeans is
       New_Line;
       Put_Line ("Clustering vector:");
 
-      for c of o.Clusters.all loop
-         Ada.Text_IO.Put (c'Img);
+      for c in 1 .. Length loop
+         Ada.Text_IO.Put (Get_Cluster (o, c, t) 'Img);
       end loop;
 
       New_Line (2);
