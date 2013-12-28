@@ -30,11 +30,12 @@ procedure kmeans_driver3 is
 
    package Kmeans is new ML.Clustering.Kmeans
       (Long_Float, My_Dim, My_Point, Length, Element);
-   kmeans_obj : Kmeans.Object (3);
+   kmeans_obj : Kmeans.Object (10);
 
    file : TIO.File_Type;
       z : My_Point;
 begin
+   data.Reserve_Capacity (Ada.Containers.Count_Type (1.1e6));
    --  read from file m.t, two Real each line
    TIO.Open
       (File => file, Mode => TIO.In_File, Name => "m.t");
@@ -44,11 +45,11 @@ begin
       AF.Get (file, z (y));
       data.Append (z);
    end loop Process;
-exception
-   when TIO.End_Error => null; --  In case of blank lines
    TIO.Close (file);
-   for j in 1 .. 1e3 loop
+   for j in 1 .. 1e2 loop
       Kmeans.Run (kmeans_obj, 1000);
    end loop;
    Kmeans.Put (kmeans_obj);
+exception
+   when TIO.End_Error => null; --  In case of blank lines
 end kmeans_driver3;
