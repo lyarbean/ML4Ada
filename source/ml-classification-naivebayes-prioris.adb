@@ -35,6 +35,9 @@ package body ML.Classification.Naivebayes.Prioris is
       --  Sample Variance
       Priori.SD := Priori.SD / (Long_Float (Priori.Variables.Length) - 1.0);
       Priori.SD := GEF.Sqrt (Priori.SD);
+      if Priori.SD < 1.0e-12 then
+         Priori.SD := 1.0e-12;
+      end if;
    end Done;
 
    function Priori (Priori : Normal_Priori; Variable : Variable_Type'Class)

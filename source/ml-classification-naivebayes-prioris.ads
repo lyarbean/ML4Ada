@@ -1,3 +1,4 @@
+with Ada.Unchecked_Deallocation;
 package ML.Classification.Naivebayes.Prioris is
    ---------------------
    --  Normal Priori  --
@@ -17,7 +18,8 @@ package ML.Classification.Naivebayes.Prioris is
    end record;
 
    overriding function Priori
-      (Priori : Normal_Priori; Variable : Variable_Type'Class) return Long_Float;
+      (Priori : Normal_Priori; Variable : Variable_Type'Class)
+      return Long_Float;
    overriding procedure Handle
       (Priori : in out Normal_Priori; Variable : Variable_Type'Class);
    overriding procedure Done (Priori : in out Normal_Priori);

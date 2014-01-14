@@ -6,31 +6,25 @@ procedure Naivebayes_Driver is
    use ML.Classification.Naivebayes;
    type Dim_Type is (Sepal_Length, Sepal_Width, Petal_Length, Petal_Width);
    type Cat_Type is (Setosa, Versicolor, Virginica);
+
    package IRIS is new Classifier (Dim_Type, Cat_type);
    use IRIS;
 
+   ----------
+   --  IO  --
+   ----------
    package TIO renames Ada.Text_IO;
-   package AF is new  Ada.Text_IO.Float_IO (Long_Float);
-   package AE is new  Ada.Text_IO.Enumeration_IO (Cat_Type);
+   package AF is new  TIO.Float_IO (Long_Float);
+   package AE is new  TIO.Enumeration_IO (Cat_Type);
 
-   function To (SL, SW, PL, PW : Long_Float) return Cell_Array;
-   function To (SL, SW, PL, PW : Long_Float) return Cell_Array is
-   begin
-      return Cell_Array'(
-         new Prioris.Long_Float_Variable'(V => SL),
-         new Prioris.Long_Float_Variable'(V => SW),
-         new Prioris.Long_Float_Variable'(V => PL),
-         new Prioris.Long_Float_Variable'(V => PW));
-   end To;
-
-   F_1 : My_Feature;
-   sl, sw, pl, pw : Long_Float;
-
+   -----------------
+   --  Variables  --
+   -----------------
+   F_1 : My_Classifier;
+   --  Accessable Variable_Type
+   sl, sw, pl, pw : aliased Prioris.Long_Float_Variable;
    file : TIO.File_Type;
    s    : Cat_Type;
-
-   E_1 : My_Event := (To (6.2, 3.4, 5.4, 2.3), Setosa); --  was Virginica);
-   E_2 : My_Event := (To (5.9, 3.0, 5.1, 1.8), Versicolor); --  was Virginica);
 begin
    --  Setup
    F_1.F := (others => (others => new Prioris.Normal_Priori));
@@ -40,12 +34,17 @@ begin
       (File => file, Mode => TIO.In_File, Name => "iris.tab");
    Train :
    while not TIO.End_Of_File (file) loop
-      AF.Get (file, sl);
-      AF.Get (file, sw);
-      AF.Get (file, pl);
-      AF.Get (file, pw);
+      AF.Get (file, sl.V);
+      AF.Get (file, sw.V);
+      AF.Get (file, pl.V);
+      AF.Get (file, pw.V);
       AE.Get (file, s);
-      F_1.Train (My_Event'(To (sl, sw, pl, pw), s));
+      declare
+         e : My_Event :=
+            (Cell_Array'(sl'Access, sw'Access, pl'Access, pw'Access), s);
+      begin
+         F_1.Train (e);
+      end;
    end loop Train;
    TIO.Close (file);
 
@@ -57,13 +56,14 @@ begin
       (File => file, Mode => TIO.In_File, Name => "iris.tab");
    Predict :
    while not TIO.End_Of_File (file) loop
-      AF.Get (file, sl);
-      AF.Get (file, sw);
-      AF.Get (file, pl);
-      AF.Get (file, pw);
+      AF.Get (file, sl.V);
+      AF.Get (file, sw.V);
+      AF.Get (file, pl.V);
+      AF.Get (file, pw.V);
       AE.Get (file, s);
       declare
-         e : My_Event := (To (sl, sw, pl, pw), s);
+         e : My_Event :=
+            (Cell_Array'(sl'Access, sw'Access, pl'Access, pw'Access), s);
       begin
          F_1.Predict (e);
          Ada.Text_IO.Put_Line (e.C'Img);
