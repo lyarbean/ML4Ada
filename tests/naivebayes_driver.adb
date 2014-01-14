@@ -1,12 +1,15 @@
 pragma Ada_2012;
 with Ada.Text_IO;
+with Ada.Unchecked_Deallocation;
 with ML.Classification.Naivebayes.Classifier;
 with ML.Classification.Naivebayes.Prioris;
 procedure Naivebayes_Driver is
    use ML.Classification.Naivebayes;
    type Dim_Type is (Sepal_Length, Sepal_Width, Petal_Length, Petal_Width);
    type Cat_Type is (Setosa, Versicolor, Virginica);
-
+   type Normal_Ref is access all Prioris.Normal_Priori;
+   procedure Free is new Ada.Unchecked_Deallocation
+      (Prioris.Normal_Priori, Normal_Ref);
    package IRIS is new Classifier (Dim_Type, Cat_type);
    use IRIS;
 
@@ -70,4 +73,7 @@ begin
       end;
    end loop Predict;
    TIO.Close (file);
+   for f of F_1.F loop
+      Free (Normal_Ref (f));
+   end loop;
 end Naivebayes_Driver;
