@@ -30,7 +30,7 @@ procedure Naivebayes_Driver is
    s    : Cat_Type;
 begin
    --  Setup
-   F_1.F := (others => (others => new Prioris.Normal_Priori));
+   F_1.Prioris := (others => (others => new Prioris.Normal_Priori));
 
    --  Train
    TIO.Open
@@ -69,11 +69,11 @@ begin
             (Cell_Array'(sl'Access, sw'Access, pl'Access, pw'Access), s);
       begin
          F_1.Predict (e);
-         Ada.Text_IO.Put_Line (e.C'Img);
+         Ada.Text_IO.Put_Line (e.Class'Img);
       end;
    end loop Predict;
    TIO.Close (file);
-   for f of F_1.F loop
-      Free (Normal_Ref (f));
+   for p of F_1.Prioris loop
+      Free (Normal_Ref (p));
    end loop;
 end Naivebayes_Driver;

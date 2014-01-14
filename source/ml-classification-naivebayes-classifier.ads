@@ -12,13 +12,13 @@ package ML.Classification.Naivebayes.Classifier is
    type Score_Type is array (Class_Type) of Long_Float;
 
    type My_Event is new Event_Type with record
-     E : Cell_Array := (others => null);
-     C : Class_Type;
+     Cells : Cell_Array := (others => null);
+     Class : Class_Type;
    end record;
 
    type My_Classifier is new Classifier_Type with record
-      F : Priori_Array := (others => (others => null));
-      P : Score_Type := (others => 0.0);  -- Apriori
+      Prioris : Priori_Array := (others => (others => null));
+      Score : Score_Type := (others => 0.0);  -- Apriori
    end record;
    overriding
    procedure Train
